@@ -1,0 +1,1 @@
+export const TK_SECRET = "secret123"
