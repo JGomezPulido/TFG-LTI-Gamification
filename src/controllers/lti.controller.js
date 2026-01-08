@@ -3,6 +3,7 @@ import fs from "fs"
 import jwt from "jsonwebtoken"
 import fetch from "node-fetch"
 import path from "path"
+import { MOODLE_IP, MOODLE_TK } from "../config.js"
 
 export const jwks = (req, res) => {
     const keystore = jose.JWK.createKeyStore();
@@ -10,9 +11,32 @@ export const jwks = (req, res) => {
     keystore.add(keys.keys[0]);
     console.log(keystore);
     console.log(keys.keys[0])
-    res.json(keystore.toJSON());
+    res.json(keystore.toJSON())
 };
 
+export const getBadge = async (req, res) => {
+    var url = new URL(`${MOODLE_IP}/webservice/rest/server.php`);
+    const functionName = "core_badges_get_user_badges"
+    url.searchParams.append('wstoken', MOODLE_TK);
+    url.searchParams.append('wsfunction', functionName);
+    url.searchParams.append('moodlewsrestformat', 'json');
+
+  // Añade parámetros
+    Object.keys(req.params || {}).forEach(key => {
+        url.searchParams.append(key, req.params[key]);
+    });
+    console.log(url.toString());
+    try{
+        var badge = await fetch(url.toString());
+
+        var badgeJSON = await badge.json();
+        console.log(badgeJSON)
+        res.json(badgeJSON)
+    }catch (error){
+        console.log(error);
+        res.sendStatus(404);
+    }
+}
 export const launch = async (req, res) => {
     const { id_token, state } = req.body;
 
@@ -52,6 +76,7 @@ export const launch = async (req, res) => {
         <p><strong>Rol:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/roles']}</p>
         <p><strong>Curso:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title || 'Desconocido'}</p>
         <p><strong>Deployment ID:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/deployment_id']}</p>
+        <a href=http://localhost:3000/api/getBadge/3> Get Badge (Console log) </a>
         `);
         // res.redirect("index.html")
     } catch (err) {

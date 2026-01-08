@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
-
+/*
+** Archivo mantenido como referencia para futuro trabajo, aunque ahora está sin utilizar.
+*/
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
