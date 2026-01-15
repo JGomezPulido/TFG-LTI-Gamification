@@ -10,12 +10,9 @@ import path from "path"
 
 //Este endpoint devuelve las claves públicas que Moodle utilizará para verificar el token de la aplicaición
 //Estas claves están en formato JWKS (JSON Web Key Set), utilizado par
-export const jwks = (req, res) => {
-    const keystore = jose.JWK.createKeyStore();
-    const keys = JSON.parse(fs.readFileSync(path.resolve('src/keys.json')));
-    keystore.add(keys.keys[0]);
-    console.log(keystore);
-    console.log(keys.keys[0])
+export const jwks = async (req, res) => {
+    const keys = fs.readFileSync('src/keys.json');
+    const keystore = await jose.JWK.asKeyStore(keys.toString());
     res.json(keystore.toJSON())
 };
 

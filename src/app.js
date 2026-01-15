@@ -3,11 +3,11 @@ import express from "express";
 import session from "express-session";
 import https from "https"
 import fs from "fs"
-
-
 import ltiRoutes from "./routes/lti.routes.js"
 
 export const APP = express();
+
+APP.set('trust proxy', 1);
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var privateKey = fs.readFileSync("certs/key.pem", 'utf8')
 var certificate = fs.readFileSync("certs/server.crt", 'utf8');
