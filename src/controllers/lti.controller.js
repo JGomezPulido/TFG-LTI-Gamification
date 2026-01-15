@@ -1,3 +1,6 @@
+//El código para las funciones del protocolo LTI ha sido basado en el tutorial presente en este enlace: https://www.andresmartinezsoto.eu/integracion-lti-13-moodle/
+
+//El paquete node-jose (JOSE = JavaScript Object Signing and Encryption) se usa tanto para generar las claves usadas en LT (ver generate-keys.js)
 import jose from "node-jose"
 import fs from "fs"
 import jwt from "jsonwebtoken"
@@ -5,6 +8,8 @@ import fetch from "node-fetch"
 import path from "path"
 import { MOODLE_IP, MOODLE_TK } from "../config.js"
 
+//Este endpoint devuelve las claves públicas que Moodle utilizará para verificar el token de la aplicaición
+//Estas claves están en formato JWKS (JSON Web Key Set), utilizado par
 export const jwks = (req, res) => {
     const keystore = jose.JWK.createKeyStore();
     const keys = JSON.parse(fs.readFileSync(path.resolve('src/keys.json')));
@@ -31,12 +36,15 @@ export const getBadge = async (req, res) => {
 
         var badgeJSON = await badge.json();
         console.log(badgeJSON)
-        res.json(badgeJSON)
+        res.send(`<h1> Data recieved: badge json: </h1>\n
+                  <p> ${JSON.stringify(badgeJSON,null,0)} </p>`);
     }catch (error){
         console.log(error);
         res.sendStatus(404);
     }
+
 }
+
 export const launch = async (req, res) => {
     const { id_token, state } = req.body;
 
@@ -51,7 +59,7 @@ export const launch = async (req, res) => {
         if (!decoded) return res.status(400).send('Token JWT inválido');
 
         const { payload } = decoded;
-        const expectedIssuer =  'http://192.168.0.17';
+        const expectedIssuer =  MOODLE_IP;
         const expectedClientId = req.session.client_id;
 
         console.log(payload);
@@ -76,7 +84,7 @@ export const launch = async (req, res) => {
         <p><strong>Rol:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/roles']}</p>
         <p><strong>Curso:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title || 'Desconocido'}</p>
         <p><strong>Deployment ID:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/deployment_id']}</p>
-        <a href=http://localhost:3000/api/getBadge/3> Get Badge (Console log) </a>
+        <a href=https://localhost:3443/api/getBadge/3> Get Badges From user 3 </a>
         `);
         // res.redirect("index.html")
     } catch (err) {
@@ -87,9 +95,10 @@ export const launch = async (req, res) => {
 
 export const login = (req, res) => {
     const query = req.method === 'POST' ? req.body : req.query;
-    const { iss, login_hint, target_link_uri, client_id, lti_message_hint } = query;
+    const { iss, login_hint, target_link_uri, client_id, lti_message_hint} = query;
 
     console.log('📥 Petición a /login con:', query);
+    
 
     if (!iss || !login_hint || !client_id || !target_link_uri) {
         return res.status(400).send('Faltan parámetros requeridos');
@@ -102,7 +111,7 @@ export const login = (req, res) => {
 
     req.session.state = state;
     req.session.nonce = nonce;
-    req.session.client_id = client_id;
+    req.session.client_id = client_id;  
 
     const authUrl = new URL(`${iss}/mod/lti/auth.php`);
     const params = new URLSearchParams({
@@ -110,7 +119,7 @@ export const login = (req, res) => {
         response_mode: 'form_post',
         scope: 'openid',
         client_id,
-        redirect_uri: "http://localhost:3000/api/launch",
+        redirect_uri: `${target_link_uri}/api/launch`,
         login_hint,
         target_link_uri,
         state,
@@ -124,7 +133,3 @@ export const login = (req, res) => {
 
     res.redirect(`${authUrl}?${params.toString()}`);
 };
-
-export const index = (req, res) => {
-    res.sendFile(path.resolve("src/index.html"));
-}

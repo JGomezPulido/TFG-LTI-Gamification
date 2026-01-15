@@ -1,7 +1,7 @@
-import APP from "./app.js"
+import httpsServer from "./app.js"
 import { connectDB } from "./db.js";
 
 connectDB();
-const PORT = 3000;
+const PORT = 3443;
 
-APP.listen(PORT);
+httpsServer.listen(PORT);
