@@ -3,7 +3,7 @@ import express from "express";
 import session from "express-session";
 import https from "https"
 import fs from "fs"
-import {TK_SECRET, MOODLE_IP} from "./config.js"
+
 
 import ltiRoutes from "./routes/lti.routes.js"
 
@@ -16,21 +16,22 @@ var credentials = {key: privateKey, cert: certificate};
 APP.use(express.urlencoded({extended: true,}));
 APP.use(express.json());
 //APP.enable('trust proxy');
-APP.use(session({
-    secret: TK_SECRET,
+const sess = session({
+    secret: process.env.TK_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
+        name: 'backend_session',
         secure: true,
-        httpOnly: false,
+        httpOnly: true,
         sameSite: "none",
-    },
-}));
+    }
+    });
+
+APP.use(sess);
 
 
 APP.use("/api/", ltiRoutes);
 
 const httpsServer = https.createServer(credentials, APP);
 export default httpsServer;
-
-//APP.use(proxy(MOODLE_IP));

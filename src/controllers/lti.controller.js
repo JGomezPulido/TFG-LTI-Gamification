@@ -6,7 +6,7 @@ import fs from "fs"
 import jwt from "jsonwebtoken"
 import fetch from "node-fetch"
 import path from "path"
-import { MOODLE_IP, MOODLE_TK } from "../config.js"
+
 
 //Este endpoint devuelve las claves públicas que Moodle utilizará para verificar el token de la aplicaición
 //Estas claves están en formato JWKS (JSON Web Key Set), utilizado par
@@ -20,9 +20,9 @@ export const jwks = (req, res) => {
 };
 
 export const getBadge = async (req, res) => {
-    var url = new URL(`${MOODLE_IP}/webservice/rest/server.php`);
+    var url = new URL(`${process.env.MOODLE_IP}/webservice/rest/server.php`);
     const functionName = "core_badges_get_user_badges"
-    url.searchParams.append('wstoken', MOODLE_TK);
+    url.searchParams.append('wstoken', process.env.MOODLE_TK);
     url.searchParams.append('wsfunction', functionName);
     url.searchParams.append('moodlewsrestformat', 'json');
 
@@ -59,7 +59,7 @@ export const launch = async (req, res) => {
         if (!decoded) return res.status(400).send('Token JWT inválido');
 
         const { payload } = decoded;
-        const expectedIssuer =  MOODLE_IP;
+        const expectedIssuer =  process.env.MOODLE_IP;
         const expectedClientId = req.session.client_id;
 
         console.log(payload);
