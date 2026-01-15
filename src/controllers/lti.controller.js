@@ -22,9 +22,9 @@ export const jwks = async (req, res) => {
 };
 
 /*
-** Esta función es la que usa el protocolo LTI para comunicar la plataforma con la herramienta LTI.
-** Aunque se llame login (es el nombre que utiliza el protocolo, no lo he elegido arbitrariamente), el mensaje realmente no contiene ninguna información sobre el usuario,
-** únicamente nos envía información sobre la plataforma (en este caso moodle) que está intentando acceder a la herramienta
+** Esta función es la que usa moodle para comunicar la plataforma con la herramienta LTI.
+** Aunque se llame login (es el nombre que utiliza moodle, no lo he elegido arbitrariamente), el mensaje realmente no contiene ninguna información sobre el usuario,
+** únicamente nos envía información sobre la plataforma que está intentando acceder a la herramienta
 */
 export const login = (req, res) => {
         //Dado que este endpoint puede recibir tanto métodos POST como GET, comprobamos qué método es para recoger los datos de la request
