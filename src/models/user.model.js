@@ -2,7 +2,29 @@ import mongoose from "mongoose";
 /*
 ** Archivo mantenido como referencia para futuro trabajo, aunque ahora está sin utilizar.
 */
-const userSchema = new mongoose.Schema({
+
+/*
+** Schema del usuario
+** Username, email son autoexplicativos, además de eso, guardamos el rol del usuario
+*/
+const UserCourseSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    roles: {
+        type: [String],
+        required: true,
+        trim: true,
+    },
+    course_id:{
+        type: Number,
+        required: true,
+        unique: true,
+    },
+});
+const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -14,10 +36,10 @@ const userSchema = new mongoose.Schema({
         trim: true,
         unique: true,
     },
-    password: {
-        type:String,
+    courses: {
+        type: [UserCourseSchema],
         required: true,
-    }
+    },
 }, 
 {
     timestamps: true,
