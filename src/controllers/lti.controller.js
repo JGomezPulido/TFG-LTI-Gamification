@@ -120,15 +120,15 @@ export const launch = async (req, res) => {
         const client = await jose.JWK.asKeyStore(jwks);
         await jose.JWS.createVerify(client).verify(id_token);
         
-        res.send(`
-            <h1>✅ Lanzamiento Exitoso</h1>
-            <p><strong>Usuario:</strong> ${payload.name} => ${payload.email}</p>
-            <p><strong>Rol:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/roles']}</p>
-            <p><strong>Curso:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title || 'Desconocido'}</p>
-            <p><strong>Deployment ID:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/deployment_id']}</p>
-            <a href=${process.env.BACKEND_IP}/api/getBadge/3> Get Badges From user 3 </a>
-            `);
-        // res.redirect(`${process.env.FRONTEND_IP}`);
+        // res.send(`
+        //     <h1>✅ Lanzamiento Exitoso</h1>
+        //     <p><strong>Usuario:</strong> ${payload.name} => ${payload.email}</p>
+        //     <p><strong>Rol:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/roles']}</p>
+        //     <p><strong>Curso:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title || 'Desconocido'}</p>
+        //     <p><strong>Deployment ID:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/deployment_id']}</p>
+        //     <a href=${process.env.BACKEND_IP}/api/getBadge/3> Get Badges From user 3 </a>
+        //     `);
+        res.redirect(`${process.env.FRONTEND_IP}`);
         } catch (err) {
             console.error('Error al verificar el token:', err.message);
             res.status(500).send(`<h1>❌ Error al procesar el lanzamiento</h1><p>${err.message}</p>`);

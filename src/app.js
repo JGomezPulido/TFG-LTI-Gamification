@@ -3,6 +3,7 @@ import express from "express";
 import session from "express-session";
 import https from "https"
 import fs from "fs"
+import cors from 'cors'
 import ltiRoutes from "./routes/lti.routes.js"
 
 export const APP = express();
@@ -12,7 +13,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var privateKey = fs.readFileSync("certs/key.pem", 'utf8')
 var certificate = fs.readFileSync("certs/server.crt", 'utf8');
 var credentials = {key: privateKey, cert: certificate};
-
+APP.use(cors({
+    origin: process.env.FRONTEND_IP
+}));
 APP.use(express.urlencoded({extended: true,}));
 APP.use(express.json());
 //APP.enable('trust proxy');
@@ -29,6 +32,7 @@ const sess = session({
     });
 
 APP.use(sess);
+
 
 
 APP.use("/api/", ltiRoutes);
