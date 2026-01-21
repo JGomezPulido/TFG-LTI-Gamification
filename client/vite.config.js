@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 const httpsConfig = {
   cert: fs.readFileSync("../certs/server.crt"),
   key: fs.readFileSync("../certs/key.pem"),
-}
+};
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,5 +17,8 @@ export default defineConfig({
   server: {
     port: 4443,
     https: httpsConfig,
-  }
-})
+    origin: 'https://localhost:4443',
+  },
+  envDir: '.',
+  base: 'https://localhost:4443',
+});

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 
 import FormInput from "../components/FormInput";
 import { loginRequest } from "../api/auth.js";
+
 export default function LoginPage(){
     const {register, handleSubmit} = useForm();
     return (
@@ -13,7 +14,8 @@ export default function LoginPage(){
             })}>
                 <FormInput type='email' placeholder='E-mail' register={register('email', {required: true})}/>
                 <FormInput type='password' placeholder='Password' register={register('password', {required: true})}/>
-                <button type='submit'>
+                <button type='submit' 
+                 className='bg-zinc-700 hover:bg-zinc-600 rounded-md'>
                     Register
                 </button>
             </form>

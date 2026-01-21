@@ -1,3 +1,4 @@
+//Utilizamos node-jose para generar nuestro archivo de keys para LTI
 import jose from 'node-jose';
 import fs from 'fs';
 

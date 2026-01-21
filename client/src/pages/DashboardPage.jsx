@@ -1,5 +1,5 @@
 export default function DashboardPage(){
-    const BASE_IP=`https://localhost:4443`
+    const BASE_IP=import.meta.env.BASE_URL;
     return (
         <div>
             <h1>Dashboard</h1>
@@ -10,5 +10,5 @@ export default function DashboardPage(){
                 <li><a href={`${BASE_IP}`}>&lt;== Landing</a></li>
             </ul>
         </div>
-    )
+    );
 }

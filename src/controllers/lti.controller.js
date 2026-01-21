@@ -23,7 +23,7 @@ export const jwks = async (req, res) => {
 };
 
 //Este endpoint es el que usa moodle para comunicar la plataforma con la herramienta LTI.
-export const login = (req, res) => {
+export const ltiLogin = (req, res) => {
         //Dado que este endpoint puede recibir tanto métodos POST como GET, comprobamos qué método es para recoger los datos de la petición
         const query = req.method === 'POST' ? req.body : req.query;
         /*Como parte del "login", recibimos los siguientes datos:
@@ -81,7 +81,7 @@ export const login = (req, res) => {
 ** Este endpoint es el que utiliza moodle para, ahora sí, lanzar la herramienta.
 ** Aquí si que nos llegan, a través del id_token (que viene codificado como jsonwebtoken), datos sobre el usuario que está usando la herramienta.
 */
-export const launch = async (req, res) => {
+export const ltiLaunch = async (req, res) => {
     const { id_token, state } = req.body;
     
     // console.log('🧠 State recibido:', state);
@@ -128,35 +128,13 @@ export const launch = async (req, res) => {
         //     <p><strong>Deployment ID:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/deployment_id']}</p>
         //     <a href=${process.env.BACKEND_IP}/api/getBadge/3> Get Badges From user 3 </a>
         //     `);
+        
+        //Aquí deberiamos de redirigir a la página de registro o a la página de landing dependiendo de si el usuario está ya registrado o no (¿asumimos que está correctamente autenticado si viene directamente desde moodle?)
         res.redirect(`${process.env.FRONTEND_IP}`);
+        
         } catch (err) {
             console.error('Error al verificar el token:', err.message);
             res.status(500).send(`<h1>❌ Error al procesar el lanzamiento</h1><p>${err.message}</p>`);
         }
 };
    
-export const getBadge = async (req, res) => {
-    var url = new URL(`${process.env.MOODLE_IP}/webservice/rest/server.php`);
-    const functionName = "core_badges_get_user_badges"
-    url.searchParams.append('wstoken', process.env.MOODLE_TK);
-    url.searchParams.append('wsfunction', functionName);
-    url.searchParams.append('moodlewsrestformat', 'json');
-
-  // Añade parámetros
-    Object.keys(req.params || {}).forEach(key => {
-        url.searchParams.append(key, req.params[key]);
-    });
-    console.log(url.toString());
-    try{
-        var badge = await fetch(url.toString());
-
-        var badgeJSON = await badge.json();
-        console.log(badgeJSON)
-        res.send(`<h1> Data recieved: badge json: </h1>\n
-                  <p> ${JSON.stringify(badgeJSON,null,0)} </p>`);
-    }catch (error){
-        console.log(error);
-        res.sendStatus(404);
-    }
-
-};
