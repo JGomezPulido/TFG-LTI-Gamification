@@ -12,6 +12,8 @@ import fs from "fs"
 import jwt from "jsonwebtoken"
 import fetch from "node-fetch"
 
+import { parseRole } from "../middlewares/validateRole.js"
+
 //Este endpoint devuelve las claves públicas que Moodle utilizará para verificar el token de la aplicaición
 //Estas claves están en formato JWKS (JSON Web Key Set)
 export const jwks = async (req, res) => {
@@ -84,9 +86,6 @@ export const ltiLogin = (req, res) => {
 export const ltiLaunch = async (req, res) => {
     const { id_token, state } = req.body;
     
-    // console.log('🧠 State recibido:', state);
-    // console.log('🧠 State en sesión:', req.session.state);
-    
     //Primero, verificamos que los datos están presentes, y verificamos el estado para mitigar Cross-site Request Forgery (CSRF)
     if (!id_token) return res.status(400).send('Falta el id_token');
     if (!state || req.session.state !== state) return res.status(400).send('Invalid state');
@@ -130,7 +129,12 @@ export const ltiLaunch = async (req, res) => {
         //     `);
         
         //Aquí deberiamos de redirigir a la página de registro o a la página de landing dependiendo de si el usuario está ya registrado o no (¿asumimos que está correctamente autenticado si viene directamente desde moodle?)
-        res.redirect(`${process.env.FRONTEND_IP}`);
+        const roles = payload['https://purl.imsglobal.org/spec/lti/claim/roles'];
+        const course = payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title;
+        const email = payload.email;
+        const role = parseRole(roles);
+        console.log(roles);
+        res.redirect(`${process.env.FRONTEND_IP}/ltiLaunch?username=${payload.name}&course=${course}&email=${email}&role=${role}`);
         
         } catch (err) {
             console.error('Error al verificar el token:', err.message);

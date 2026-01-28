@@ -3,8 +3,8 @@ export default function LandingPage(){
     return (
         <div>
             <ul>
-            <li><a href={`${BASE_IP}dashboard/0`}>Dashboard</a></li>
-            <li><a href={`${BASE_IP}profile/0`}>Profile</a></li>
+            <li><a href={`${BASE_IP}dashboard`}>Dashboard</a></li>
+            <li><a href={`${BASE_IP}profile`}>Profile</a></li>
             </ul>
         </div>
     );

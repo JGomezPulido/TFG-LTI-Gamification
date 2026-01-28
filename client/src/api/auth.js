@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "./axios.js";
 
-const API =  import.meta.env.VITE_BACKEND_BASE_URL;
-
-export const registerRequest = user => axios.post(`${API}/register`, user);
-export const loginRequest = user => axios.post(`${API}/login`, user);
+export const registerRequest = user => axios.post(`/register`, user);
+export const loginRequest = user => axios.post(`/login`, user);
+export const requestUser = email => axios.get(`/user/${email}`);
+export const verifyTokenRequest = () => axios.get("/verify");

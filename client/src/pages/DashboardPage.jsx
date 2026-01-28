@@ -1,5 +1,8 @@
+import { useAuth } from "../context/authContext";
+
 export default function DashboardPage(){
     const BASE_IP=import.meta.env.BASE_URL;
+    const {user} = useAuth();
     return (
         <div>
             <h1>Dashboard</h1>

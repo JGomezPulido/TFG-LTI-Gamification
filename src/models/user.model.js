@@ -21,8 +21,8 @@ const UserCourseSchema = new mongoose.Schema({
     course_id:{
         type: Number,
         required: true,
-        unique: true,
-    },
+        
+    }
 });
 const UserSchema = new mongoose.Schema({
     username: {
@@ -36,10 +36,15 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         unique: true,
     },
-    courses: {
-        type: [UserCourseSchema],
+    password: {
+        type: String,
         required: true,
+
     },
+    courses: {
+        type: [UserCourseSchema]
+    },
+    role: String
 }, 
 {
     timestamps: true,

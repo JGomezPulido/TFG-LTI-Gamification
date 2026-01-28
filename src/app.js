@@ -1,5 +1,7 @@
 import express from "express";
 import session from "express-session";
+import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import https from "https"
 import fs from "fs"
 import cors from 'cors'
@@ -18,7 +20,8 @@ var certificate = fs.readFileSync("certs/server.crt", 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 //Configuración CORS (para que nuestro frontend no tenga problemas al hacer peticiones)
 APP.use(cors({
-    origin: process.env.FRONTEND_IP
+    origin: process.env.FRONTEND_IP,
+    credentials: true,
 }));
 
 //Middlewares de express 
@@ -26,6 +29,9 @@ APP.use(cors({
 //json para que se pueda leer JSON de las requests REST (express no puede hacer esto por defecto)
 APP.use(express.urlencoded({extended: true,}));
 APP.use(express.json());
+APP.use(cookieParser())
+
+APP.use(morgan('dev'));
 
 //Configuración del middleware de sesión, en este caso necesitamos activar las cross-site cookies tanto para comunicarnos con nuestro frontend, como con moodle
 const sess = session({
@@ -35,16 +41,16 @@ const sess = session({
     cookie: {
         name: 'backend_session',
         secure: true,
-        httpOnly: true,
+        httpOnly: false,
         sameSite: "none",
     }
 });
 APP.use(sess);
 
 //Por último, añadimos nuestras rutas de la api, con el prefijo /api/ por claridad y consistencia.
-APP.use("/api/", ltiRoutes);
-APP.use("/api/", badgeRoutes);
-APP.use("/api/", authRoutes);
+APP.use("/lti", ltiRoutes);
+APP.use("/api", badgeRoutes);
+APP.use("/api", authRoutes);
 
 //Creamos y exportamos el servidor que después iniciamos en index.js
 const httpsServer = https.createServer(credentials, APP);

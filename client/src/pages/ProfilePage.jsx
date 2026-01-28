@@ -1,6 +1,6 @@
 export default function ProfilePage(){
     const BASE_IP=import.meta.env.BASE_URL;
-    console.log(BASE_IP)
+
     return (
         <div>
             <h1>Perfil</h1>
