@@ -1,29 +1,21 @@
 import mongoose from "mongoose";
-/*
-** Archivo mantenido como referencia para futuro trabajo, aunque ahora está sin utilizar.
-*/
 
-/*
-** Schema del usuario
-** Username, email son autoexplicativos, además de eso, guardamos el rol del usuario
-*/
 const UserCourseSchema = new mongoose.Schema({
-    name: {
+    _id: false,
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+        unique: true,
+        required: true,
+        autoIndex: false,
+    },
+    role: {
         type: String,
         required: true,
         trim: true,
     },
-    roles: {
-        type: [String],
-        required: true,
-        trim: true,
-    },
-    course_id:{
-        type: Number,
-        required: true,
-        
-    }
 });
+
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -32,21 +24,21 @@ const UserSchema = new mongoose.Schema({
     },
     email: {
         type: String,
+        unique: true,
         required: true,
         trim: true,
-        unique: true,
     },
     password: {
         type: String,
         required: true,
 
     },
-    courses: {
+    roles: {
         type: [UserCourseSchema]
     },
-    role: String
 }, 
 {
     timestamps: true,
 });
+
 export default mongoose.model("User", UserSchema);

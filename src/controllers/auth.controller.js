@@ -6,27 +6,27 @@ import jwt from 'jsonwebtoken';
 export const register = async  (req, res) => {
     const {username, password, email, ltiUser} = req.body;
     try{
-        //Encriptamos la contraseña para guardarla en la base de datos
+        //Creamos un hash de la contraseña para guardarla en la base de datos
         const hash = await bcrypt.hash(password, 10);
         const newUser = new User({ email, password: hash, username});
-        const userSaved = await newUser.save();
-
-        const token = await createAccessToken({id: userSaved.id});
-
+        
+        
         if(ltiUser){
-            console.log(ltiUser);
+            newUser.role = ltiUser.role;
         };
+        const userSaved = await newUser.save();
+        const token = await createAccessToken({id: userSaved.id});
         res.cookie('token', token, {
             sameSite: 'none',
             secure: true,
             htppOnly: false
         });
+        console.log(userSaved);
         return res.json({
             id: userSaved.id,
             username: userSaved.username,
             email: userSaved.email,
             role: userSaved.role,
-            courses: userSaved.courses,
         });
     }catch(error){
         console.log(error);
@@ -61,13 +61,12 @@ export const login = async (req, res) => {
             secure: true,
             htppOnly: false
         });
-
+        console.log(ltiUser);
         return res.json({
             id: foundUser.id,
             username: foundUser.username,
             email: foundUser.email,
             role: foundUser.role,
-            courses: foundUser.courses,
         });
     }catch(error){
         res.status(400).json({message: error.message});
@@ -106,7 +105,7 @@ export const profile = async (req, res) => {
         id: userFound.id,
         username: userFound.username,
         email: userFound.email,
-        courses: userFound.courses,
+        role: userFound.role,
         createdAt: userFound.createdAt,
         updatedAt: userFound.updateadAt,
     });
@@ -126,7 +125,6 @@ export const verify = async (req, res) => {
             username: user.username,
             email: user.email,
             role: user.role,
-            courses: user.courses,
         });
     });
 }

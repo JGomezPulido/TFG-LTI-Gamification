@@ -21,8 +21,9 @@ export const AuthProvider = ({children}) => {
     const signup = async (data) => {
         try{
             const res = await registerRequest(data);
-            setUser(res.user);
+            setUser(res.data);
             setAuthenticated(true);
+            console.log(res.data);
         }catch(error){
             setUser(null);
             setAuthenticated(false);
@@ -55,29 +56,32 @@ export const AuthProvider = ({children}) => {
     useEffect(() => {
         async function checkToken() {
             const cookies = Cookies.get();
-            if(cookies.token){
-                try{
-                    const res = await verifyTokenRequest();
-                    if(!res.data){
-                        setAuthenticated(false);
-                        setUser(false);
-                        setLoading(false);
-                        return;
-                    }
-                    setAuthenticated(true);
-                    setUser(res.data);
-                    setLoading(false);
-                }catch (error){
-                    console.log("error", error)
+            if(!cookies.token){
+                console.log("No token");
+                setAuthenticated(false);
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+            
+            try{
+                const res = await verifyTokenRequest();
+                if(!res.data){
                     setAuthenticated(false);
-                    setUser(null);
+                    setUser(false);
                     setLoading(false);
+                    return;
                 }
-            }else{
+                setAuthenticated(true);
+                setUser(res.data);
+                setLoading(false);
+            }catch (error){
+                console.log("error", error)
                 setAuthenticated(false);
                 setUser(null);
                 setLoading(false);
             }
+            
         }
 
         checkToken();

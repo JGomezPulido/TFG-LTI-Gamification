@@ -34,4 +34,6 @@ export const parseRole = (roles) => {
             return "Student";
         }
     }
+    
+    return null;
 };

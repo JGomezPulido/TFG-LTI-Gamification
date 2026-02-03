@@ -7,12 +7,12 @@ El paquete node-jose (JOSE = JavaScript Object Signing and Encryption) se usa ta
 
 El paquete jsonwebtoken se utiliza para decodificar el id_token que moodle nos manda a launch por LTI, que está enciptado utilizando esta misma tecnologia (ver launch, línea 71)
 */
-import jose from "node-jose"
-import fs from "fs"
-import jwt from "jsonwebtoken"
-import fetch from "node-fetch"
+import jose from "node-jose";
+import fs from "fs";
 
-import { parseRole } from "../middlewares/validateRole.js"
+import User from "../models/user.model.js";
+import Course from "../models/course.model.js";
+import { createAccessToken } from "../libs/jwt.js"
 
 //Este endpoint devuelve las claves públicas que Moodle utilizará para verificar el token de la aplicaición
 //Estas claves están en formato JWKS (JSON Web Key Set)
@@ -20,6 +20,7 @@ export const jwks = async (req, res) => {
     //Cargamos las keys desde el archivo pertinente y las devolvemos en la respuesta.
     const keys = fs.readFileSync(process.env.KEY_PATH);
     const keystore = await jose.JWK.asKeyStore(keys.toString());
+    console.log('JWKS solicitadas');
     //El método toJSON() de la keystore acepta un bool, pero usando el valor por defecto (false), hace que solo se parseen las claves públicas, que es nuestro objetivo en ente caso.
     res.json(keystore.toJSON())
 };
@@ -84,41 +85,56 @@ export const ltiLogin = (req, res) => {
 ** Aquí si que nos llegan, a través del id_token (que viene codificado como jsonwebtoken), datos sobre el usuario que está usando la herramienta.
 */
 export const ltiLaunch = async (req, res) => {
-    const { id_token, state } = req.body;
-    
-    //Primero, verificamos que los datos están presentes, y verificamos el estado para mitigar Cross-site Request Forgery (CSRF)
-    if (!id_token) return res.status(400).send('Falta el id_token');
-    if (!state || req.session.state !== state) return res.status(400).send('Invalid state');
-    
-    try {
-        //Decodificamos el id_token para obtener los datos necesarios para seguir con el resto de la autenticación
-        //De momento no se verifica el token dado que los datos necesarios para ello se encuentran codificados dentro
-        const decoded = jwt.decode(id_token, { complete: true });
-        if (!decoded) return res.status(400).send('Token JWT inválido');
-        
-        //A continuación recogemos y verificamos los datos necesarios para verificar la identidad del usuario
-        const { payload } = decoded;
-        const expectedIssuer =  process.env.MOODLE_IP;
-        const expectedClientId = req.session.client_id;
-        
-        //console.log(payload);
-        //Verificamos que la plataforma que se está comunicando con nosotros, y el client ID que nos envía son los esperados
-        if (payload.iss !== expectedIssuer) return res.status(401).send('Issuer no válido');
-        if (
-            (Array.isArray(payload.aud) && !payload.aud.includes(expectedClientId)) ||
-            (!Array.isArray(payload.aud) && payload.aud !== expectedClientId)
-        ) {
-            return res.status(401).send('Client ID no válido');
+        const {course, user} = req.ltiData;
+
+        console.log(course, user);
+        try {  
+            //Comprobamos si el usuario existe en la BBDD
+            var userFound = await User.findOne({email: user.email});
+            var isNew = !userFound;
+            if (isNew) {
+                const newUser = new User({
+                    username: user.username,
+                    email: user.email,
+                    password: process.env.DEFAULT_PASSWORD,
+                });
+                userFound = await newUser.save();
+            } 
+
+            const foundCourse = await Course.findOne({courseID: course.id});
+            var finalUser; 
+            if (!foundCourse) {
+                //Si el curso no existe, lo creamos, guardamos y le damos roles al usuario
+                const newCourse = new Course({
+                    name: course.title,
+                    courseID: course.id,
+                    users: [userFound.id],
+                });
+                const savedCourse = await newCourse.save();
+
+                userFound.roles.push({ course: savedCourse.id, role: user.role });
+                finalUser = await userFound.save();
+               
+            } else if (isNew) {
+                //Si el curso ya existia pero el usuario es nuevo, lo añadimos al curso y le damos roles
+                foundCourse.users.push(userFound.id);
+                await foundCourse.save();
+
+                userFound.roles.push({ course: foundCourse.id, role: user.role });
+                finalUser = await userFound.save();
+            }
+            finalUser = userFound;
+            const token = await createAccessToken({id: finalUser.id});
+            res.cookie('token', token, {
+                sameSite: 'none',
+                secure: true,
+                htppOnly: false
+            });
+            return res.redirect(`${process.env.FRONTEND_IP}/dashboard`);
+            
+        } catch (error) {
+            return res.status(401).json({message: error.message});
         }
-        //Este nonce tiene que ser el mismo que se estableció en /login
-        if (payload.nonce !== req.session.nonce) return res.status(401).send('Nonce no válido');
-        
-        //Por último, verificamos que el jwt está correctamente firmado
-        const jwksUrl = `${payload.iss}/mod/lti/certs.php`;
-        const jwks = await fetch(jwksUrl).then(res => res.json());
-        const client = await jose.JWK.asKeyStore(jwks);
-        await jose.JWS.createVerify(client).verify(id_token);
-        
         // res.send(`
         //     <h1>✅ Lanzamiento Exitoso</h1>
         //     <p><strong>Usuario:</strong> ${payload.name} => ${payload.email}</p>
@@ -129,16 +145,14 @@ export const ltiLaunch = async (req, res) => {
         //     `);
         
         //Aquí deberiamos de redirigir a la página de registro o a la página de landing dependiendo de si el usuario está ya registrado o no (¿asumimos que está correctamente autenticado si viene directamente desde moodle?)
-        const roles = payload['https://purl.imsglobal.org/spec/lti/claim/roles'];
-        const course = payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title;
-        const email = payload.email;
-        const role = parseRole(roles);
-        console.log(roles);
-        res.redirect(`${process.env.FRONTEND_IP}/ltiLaunch?username=${payload.name}&course=${course}&email=${email}&role=${role}`);
+        console.log(course, user);
+        const launchUrl = new URL(`${process.env.FRONTEND_IP}/ltiLaunch`);
+        const params = new URLSearchParams({
+            ... user,
+            course,
+        });
+        //Deberia de redirigir al dashboard del curso en el que has logeado
+        res.redirect(`${launchUrl}?${params.toString()}`);
         
-        } catch (err) {
-            console.error('Error al verificar el token:', err.message);
-            res.status(500).send(`<h1>❌ Error al procesar el lanzamiento</h1><p>${err.message}</p>`);
-        }
 };
    
