@@ -9,26 +9,39 @@ import ProfilePage from './pages/ProfilePage';
 import LTILaunchPage from './pages/LTILaucnhPage';
 import { AuthProvider } from './context/authContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleRoute from './components/RoleRoute';
+import { BadgeProvider } from './context/badgeContext';
+import { CourseProvider } from './context/courseContext';
+import CreateBadgePage from './pages/CreateBadgePage';
 function App() {
   return ( 
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<LandingPage/>}/>
-          <Route path='/register' element={<RegisterPage/>}/>
-          <Route path='/login' element={<LoginPage/>}/>
-          <Route path='/ltiLaunch' element={<LTILaunchPage/>}/>
+      <CourseProvider>
+        <BadgeProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/' element={<LandingPage/>}/>
+              <Route path='/register' element={<RegisterPage/>}/>
+              <Route path='/login' element={<LoginPage/>}/>
+              <Route path='/ltiLaunch' element={<LTILaunchPage/>}/>
 
-          <Route element={<ProtectedRoute/>} >
-            <Route path='/dashboard' element={<DashboardPage/>}/>
-            <Route path='/course/:course_id' element={<CoursePage/>}/>
-            <Route path='/profile' element={<ProfilePage/>}/>
-            <Route path='/badges' element={<div>Lista de Badges conseguidas</div>}/>
-            <Route badge='/badge/:badge_id' element={<div>Vista de una Badge en particular</div>}/>
-            <Route path='/createBadge' element={<div>Creación de Badges</div>}/>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+              <Route element={<ProtectedRoute/>} >
+                <Route path='/dashboard' element={<DashboardPage/>}/>
+                <Route path='/profile' element={<ProfilePage/>}/>
+                <Route path='/course/:course_id' element={<CoursePage/>}/>
+                <Route badge='/badge/:badge_id' element={<div>Vista de una Badge en particular</div>}/>
+                
+                <Route element={<RoleRoute accepted={"Instructor"}/>}>
+                  <Route path='/badge/create' element={<CreateBadgePage/>}/>
+                  <Route path='/badge/delete/:id' element={<div>Creación de Badges</div>}/>
+                  <Route path='/badge/update/:id' element={<div>Creación de Badges</div>}/>
+                  <Route path='/badge/award/:id'  element={<div>Creación de Badges</div>}/>
+                </Route>
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </BadgeProvider>
+      </CourseProvider>
     </AuthProvider>
   );
 }

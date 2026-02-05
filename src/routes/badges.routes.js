@@ -1,7 +1,6 @@
 import { Router } from "express";
 
 import { 
-    getUserBadges,
     awardBadge,
     createBadge,
     deleteBadge,
@@ -20,10 +19,11 @@ const router = Router();
 router.post("/badges/award/:userid", authRequired, roleRequired("Instructor"), awardBadge)
 
 //badges CRUD
-router.get("/badges", authRequired, getBadges);
-router.get("/badges/:id", authRequired, getBadge);
-router.post("/badges", authRequired, roleRequired("Instructor"), createBadge);
+router.get("/badges/:course", authRequired, getBadges);
+router.get("/badges/:course/badge/:id", authRequired, getBadge);
+router.post("/badges/:course", authRequired, roleRequired("Instructor"), createBadge);
 router.delete("/badges/:id", authRequired, roleRequired("Instructor"), deleteBadge);
 router.put("/badges/:id", authRequired, roleRequired("Instructor"), updateBadge);
+router.post("/badges/award/course/:course/badge/:badge/target/:user", authRequired, roleRequired("Instructor"), awardBadge)
 
 export default router;

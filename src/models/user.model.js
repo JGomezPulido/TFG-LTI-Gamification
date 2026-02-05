@@ -16,6 +16,21 @@ const UserCourseSchema = new mongoose.Schema({
     },
 });
 
+const UserAssertionSchema = new mongoose.Schema({
+    _id: false,
+    badge: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "BadgeClass",
+        required: true,
+        unique: true,
+        autoIndex: false,
+    },
+    courses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+    }]
+})
+
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -36,6 +51,9 @@ const UserSchema = new mongoose.Schema({
     roles: {
         type: [UserCourseSchema]
     },
+    assertions: {
+        type: [UserAssertionSchema]
+    }
 }, 
 {
     timestamps: true,

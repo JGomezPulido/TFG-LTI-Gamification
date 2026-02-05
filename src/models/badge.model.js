@@ -39,11 +39,10 @@ const BadgeClassSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    user: {
+    courses: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
+        ref: "Course",
+    }],
     tags: [String],
     alignment: AlignmentSchema
 },

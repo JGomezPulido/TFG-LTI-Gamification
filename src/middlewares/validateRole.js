@@ -4,7 +4,7 @@ import User from "../models/user.model.js"
 export const roleRequired = (expectedRole) => {
     return async (req, res, next) => {
         const {id} = req.user;
-        const {role: userRole} = await User.findById(id, 'role');
+        const {role: userRole} = await User.findById(id, 'roles');
         console.log(`User Role: ${userRole}, expected: ${expectedRole}`)
         //Admins e Instructores pueden acceder a endpoints para el instructor
         if(expectedRole === "Instructor" && (userRole === "Student" || userRole === "" || userRole === null || userRole === undefined)){

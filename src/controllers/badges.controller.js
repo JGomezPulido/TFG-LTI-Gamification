@@ -1,14 +1,36 @@
 import fetch from "node-fetch";
-import BadgeClass from "../models/badge.model.js"
-
+import BadgeClass from "../models/badge.model.js";
+import Course from "../models/course.model.js";
+import User from "../models/user.model.js";
 export const awardBadge = async (req, res) => {
-    //TODO
-    res.sendStatus(404);
+    const [course, badge, user] = req.params;
+    try {
+        const foundBadge = BadgeClass.findOne({_id: badge, courses: course});
+        if(!foundBadge) return res.status(404).json({messsage: "Could not find badge"});
+
+        const updateUser = await User.findByIdAndUpdate({_id: user, "badges.badge": badge},
+             {"$push": {"badges.$.course": course}});
+        if(!updateUser){
+            const foundUser  = await User.findById(user, {"$push": {
+                badges: {
+                    badge: badge, courses: [course]
+                }}});
+            if(!foundUser) return res.status(404).json({messsage: "Could not find user"});
+        }
+        res.sendStatus(200);
+    } catch (error) {
+        return res.status(500).json({message: error.message})
+    }    
 };
 
 export const createBadge = async (req, res) => {
     const {name, description, criteria, image, alignment, tags} = req.body;
+    const {course} = req.params.course;
     try{
+        const foundCourse = await Course.findById(course);
+        console.log("here")
+        if(!foundCourse) return res.status(404).json({message:"Course could not be found"})
+            ;
         const newBadge = new BadgeClass({
             name,
             description,
@@ -16,32 +38,29 @@ export const createBadge = async (req, res) => {
             image,
             alignment, 
             tags,
-            user: req.user.id,
+            courses: [foundCourse._id],
         });
         const savedBadge = await newBadge.save();
         res.json(savedBadge);
     }catch (error){
+        console.log(error.message)
         res.status(400).json({message: error.message});
     }
 };
 
 export const deleteBadge = async (req, res) => {
     console.log(req.params.id);
-    const badge = await BadgeClass.findOneAndDelete({
-        _id: req.params.id,
-        user: req.user.id,
-    });
+    const badge = await BadgeClass.findByIdAndDelete(req.params.id);
     if(!badge) return res.status(400).json({message: "Badge not found"});
     res.status(200).json(badge);
 };
 
 export const updateBadge = async (req, res) => {
-    console.log(req.params.id);
-    const badge = await BadgeClass.findOneAndUpdate(
-        {
-            _id: req.params.id, 
-            user: req.user.id,
-        },
+    const badge = await BadgeClass.findByIdAndUpdate(
+    {
+        _id: req.params.id, 
+        user: req.user.id,
+    },
         req.body,
         {new: true}
     );
@@ -50,17 +69,26 @@ export const updateBadge = async (req, res) => {
 };
 
 export const getBadges = async (req, res) => {
-    const badges = await BadgeClass.find({user: req.user.id})/*.populate('propiedad') para que mongoose inyecte los datos de la propiedad*/;
-    res.json(badges)
+    const course = req.params.course;
+    try{
+        const foundCourse = await BadgeClass.findById(course, 'badges').populate('badges');
+        if(!foundCourse) return res.status(404).json({message: "Could not find course"});
+        res.json(foundCourse.badges);
+    }catch (error){
+        
+    }
 };
 
 export const getBadge = async (req, res) => {
-    const badge = await BadgeClass.findOne({
-        _id: req.params.id,
-        user: req.user.id
-    });
-    if(!badge) return res.status(400).json({message: "Inexistent Badge"});
-    res.json(badge);
+    try {
+        
+        const badge = await BadgeClass.findOne({id: req.params.id, courses: req.params.course},);
+        if(!badge) return res.status(400).json({message: "Inexistent Badge"});
+        res.json(badge);
+    } catch (error) {
+        return res.sendStatus(500).json({message: error.message});
+    }
+    
 };
 
 /**

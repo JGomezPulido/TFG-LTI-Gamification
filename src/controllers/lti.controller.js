@@ -135,24 +135,7 @@ export const ltiLaunch = async (req, res) => {
         } catch (error) {
             return res.status(401).json({message: error.message});
         }
-        // res.send(`
-        //     <h1>✅ Lanzamiento Exitoso</h1>
-        //     <p><strong>Usuario:</strong> ${payload.name} => ${payload.email}</p>
-        //     <p><strong>Rol:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/roles']}</p>
-        //     <p><strong>Curso:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/context']?.title || 'Desconocido'}</p>
-        //     <p><strong>Deployment ID:</strong> ${payload['https://purl.imsglobal.org/spec/lti/claim/deployment_id']}</p>
-        //     <a href=${process.env.BACKEND_IP}/api/getBadge/3> Get Badges From user 3 </a>
-        //     `);
-        
-        //Aquí deberiamos de redirigir a la página de registro o a la página de landing dependiendo de si el usuario está ya registrado o no (¿asumimos que está correctamente autenticado si viene directamente desde moodle?)
-        console.log(course, user);
-        const launchUrl = new URL(`${process.env.FRONTEND_IP}/ltiLaunch`);
-        const params = new URLSearchParams({
-            ... user,
-            course,
-        });
-        //Deberia de redirigir al dashboard del curso en el que has logeado
-        res.redirect(`${launchUrl}?${params.toString()}`);
+       
         
 };
    

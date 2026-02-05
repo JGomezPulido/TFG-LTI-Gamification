@@ -81,7 +81,8 @@ export const logout = (req, res) => {
 
 export const getUserByEmail = async (req, res) => {
     const {email} = req.params;
-    const user = await User.findOne({email});
+    const user = await User.findOne({email}).populate('roles.course', '_id name');
+    console.log(user);
     if(!user) return res.status(200).json({found: false});
     res.json({
         found: true,
@@ -89,8 +90,7 @@ export const getUserByEmail = async (req, res) => {
             id: user.id,
             username: user.username,
             email: user.email,
-            courses: user.courses,
-            role: user.role
+            roles: user.roles,
         },
     });
 }
@@ -105,7 +105,7 @@ export const profile = async (req, res) => {
         id: userFound.id,
         username: userFound.username,
         email: userFound.email,
-        role: userFound.role,
+        roles: userFound.roles,
         createdAt: userFound.createdAt,
         updatedAt: userFound.updateadAt,
     });
@@ -117,14 +117,15 @@ export const verify = async (req, res) => {
     jwt.verify(token, process.env.TK_SECRET, async (err, data) => {
         if(err) return res.status(401).json({message: "Not authenticated"});
 
-        const user = await User.findById(data.id);
+        const user = await User.findById(data.id).populate('roles.course', '_id name');
+        console.log(user.roles[0])
         if(!user) return res.status(401).json({message: "Not authenticated"});
         
         res.json({
             id: user.id,
             username: user.username,
             email: user.email,
-            role: user.role,
+            roles: user.roles,
         });
     });
 }

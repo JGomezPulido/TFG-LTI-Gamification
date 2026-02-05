@@ -6,8 +6,10 @@ const CourseSchema = new mongoose.Schema({
         required: true,
     },
     users: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "User",
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        }],
 
     },
     courseID: {
