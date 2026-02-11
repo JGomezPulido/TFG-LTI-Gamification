@@ -25,12 +25,12 @@ export const awardBadge = async (req, res) => {
 
 export const createBadge = async (req, res) => {
     const {name, description, criteria, image, alignment, tags} = req.body;
-    const {course} = req.params.course;
+    const course = req.params.id;
     try{
         const foundCourse = await Course.findById(course);
         console.log("here")
-        if(!foundCourse) return res.status(404).json({message:"Course could not be found"})
-            ;
+        console.log(foundCourse);
+        if(!foundCourse) return res.status(404).json({message:"Course could not be found"});
         const newBadge = new BadgeClass({
             name,
             description,
@@ -69,13 +69,16 @@ export const updateBadge = async (req, res) => {
 };
 
 export const getBadges = async (req, res) => {
-    const course = req.params.course;
+    const course = req.course;
     try{
-        const foundCourse = await BadgeClass.findById(course, 'badges').populate('badges');
-        if(!foundCourse) return res.status(404).json({message: "Could not find course"});
-        res.json(foundCourse.badges);
+        const foundBadges = await BadgeClass.find({courses: course.id});
+        console.log(course.id);
+        if(!foundBadges) return res.status(404).json({message: "Could not find course"});
+        console.log(foundBadges);
+        res.json(foundBadges);
     }catch (error){
-        
+        console.log(error.message);
+        res.status(404).json({message: error.message});
     }
 };
 

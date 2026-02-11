@@ -59,7 +59,8 @@ export const login = async (req, res) => {
         res.cookie('token', token, {
             sameSite: 'none',
             secure: true,
-            htppOnly: false
+            htppOnly: false,
+            partitioned: true,
         });
         console.log(ltiUser);
         return res.json({
@@ -79,37 +80,7 @@ export const logout = (req, res) => {
     res.sendStatus(200);
 }
 
-export const getUserByEmail = async (req, res) => {
-    const {email} = req.params;
-    const user = await User.findOne({email}).populate('roles.course', '_id name');
-    console.log(user);
-    if(!user) return res.status(200).json({found: false});
-    res.json({
-        found: true,
-        user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            roles: user.roles,
-        },
-    });
-}
 
-export const profile = async (req, res) => {
-    const {id} = req.user;
-    const userFound = await User.findById(id);
-    console.log(req.user)
-    if(!userFound) return res.status(400).json({message: "User not found"});
-    console.log(userFound);
-    return res.json({
-        id: userFound.id,
-        username: userFound.username,
-        email: userFound.email,
-        roles: userFound.roles,
-        createdAt: userFound.createdAt,
-        updatedAt: userFound.updateadAt,
-    });
-}
 
 export const verify = async (req, res) => {
     const {token} = req.cookies;

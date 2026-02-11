@@ -10,20 +10,20 @@ import {
 } from "../controllers/badges.controller.js";
 
 import { authRequired } from "../middlewares/validateToken.js";
-import { roleRequired } from "../middlewares/validateRole.js";
+import { roleRequired, courseRequired } from "../middlewares/validateRole.js";
 const router = Router();
 
 //Rutas de la API
 //Esta primera deberian de llamarse assertions para cumplir con el standard OpenBadges
 //Devuelve las Badges asignadas a un usuario
-router.post("/badges/award/:userid", authRequired, roleRequired("Instructor"), awardBadge)
+router.post("/badges/award/:userid", authRequired, courseRequired, roleRequired("Instructor"), awardBadge)
 
 //badges CRUD
-router.get("/badges/:course", authRequired, getBadges);
-router.get("/badges/:course/badge/:id", authRequired, getBadge);
-router.post("/badges/:course", authRequired, roleRequired("Instructor"), createBadge);
-router.delete("/badges/:id", authRequired, roleRequired("Instructor"), deleteBadge);
-router.put("/badges/:id", authRequired, roleRequired("Instructor"), updateBadge);
-router.post("/badges/award/course/:course/badge/:badge/target/:user", authRequired, roleRequired("Instructor"), awardBadge)
+router.get("/badges", authRequired, courseRequired, getBadges);
+router.get("/badges/badge/:id", authRequired, courseRequired, getBadge);
+router.post("/badges/:id", authRequired, courseRequired, roleRequired("Instructor"), createBadge);
+router.delete("/badges/:id", authRequired, courseRequired, roleRequired("Instructor"), deleteBadge);
+router.put("/badges/:id", authRequired, courseRequired, roleRequired("Instructor"), updateBadge);
+router.post("/badges/award/:badge/target/:user", authRequired, courseRequired, roleRequired("Instructor"), awardBadge)
 
 export default router;

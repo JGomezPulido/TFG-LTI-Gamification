@@ -1,10 +1,10 @@
 import { createContext, useContext, useState } from "react";
 import { useCourse } from "./courseContext";
-import { createBadgeRequest } from "../api/badges";
+import { createBadgeRequest, getBadgesRequest } from "../api/badges";
 
 const BadgeContext = createContext();
 
-export function useBadges (){
+export const useBadges = () => {
     const context = useContext(BadgeContext);
     if(!context){
         throw new Error("useBadges must be used within BadgeProvider")
@@ -12,16 +12,16 @@ export function useBadges (){
     return context;
 }
 
-export function BadgeProvider ({children}){
+export const BadgeProvider = ({children}) => {
     const {course} = useCourse();
 
     const [badges, setBadges] = useState([]);
 
     const createBadge = async (data) => {
         try{
-            const res = await createBadgeRequest(data, course._id);
+            const res = await createBadgeRequest(data, course.id);
+            console.log(res);
             setBadges(res.data);
-            console.log(res.data);
         } catch (error) {
             console.log("Error: ", error.message);
         }
@@ -30,7 +30,15 @@ export function BadgeProvider ({children}){
     const awardBadge  = async (id, user) => {};
     const updateBadge = async (id, data) => {};
     const getBadge    = async (id) => {};
-    const getBadges   = async () => {};
+    const getBadges   = async () => {
+         try{
+            const res = await getBadgesRequest();
+            setBadges(res.data);
+            console.log("badges:",res.data);
+        } catch (error) {
+            console.log("Error: ", error.message);
+        }
+    };
 
     return (
         <BadgeContext.Provider value={{

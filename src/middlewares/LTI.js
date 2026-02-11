@@ -6,7 +6,8 @@ import { parseRole } from "./validateRole.js";
 
 export const checkLTI = async (req, res, next) => {
     const { id_token, state } = req.body;
-    
+    console.log(state);
+    console.log(req.session.state);
     //Primero, verificamos que los datos están presentes, y verificamos el estado para mitigar Cross-site Request Forgery (CSRF)
     if (!id_token) return res.status(400).send('Falta el id_token');
     if (!state || req.session.state !== state) return res.status(400).send('Invalid state');

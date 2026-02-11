@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
 import { useBadges } from "../context/badgeContext";
 import FormInput from "../components/FormInput";
+import { useCourse } from "../context/courseContext";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateBadgePage(){
     const {register, handleSubmit} = useForm();
     const {createBadge} = useBadges();
-
+    const navigate = useNavigate();
     return (
         <div className='flex h-screen items-center justify-center'>
             <div className='flex bg-zinc-800 max-w-md px-10 pt-2 pb-5 rounded-md'>
@@ -13,7 +15,6 @@ export default function CreateBadgePage(){
                 <form onSubmit={handleSubmit(async (values) => {
                     try{
                         await createBadge(values);
-                        console.log("logeando");
                         navigate('/dashboard');
                     }catch (error){
                         console.log("Hubo un error al logear: ", error)

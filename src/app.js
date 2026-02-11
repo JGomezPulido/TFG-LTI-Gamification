@@ -2,13 +2,14 @@ import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import https from "https"
-import fs from "fs"
-import cors from 'cors'
+import https from "https";
+import fs from "fs";
+import cors from 'cors';
 
 import ltiRoutes from "./routes/lti.routes.js"
 import badgeRoutes from "./routes/badges.routes.js";
-import authRoutes from "./routes/auth.routes.js"
+import authRoutes from "./routes/auth.routes.js";
+import courseRoutes from "./routes/course.routes.js";
 
 export const APP = express();
 
@@ -39,10 +40,10 @@ const sess = session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        name: 'backend_session',
         secure: true,
         httpOnly: false,
         sameSite: "none",
+        partitioned: true,
     }
 });
 APP.use(sess);
@@ -51,6 +52,7 @@ APP.use(sess);
 APP.use("/lti", ltiRoutes);
 APP.use("/api", badgeRoutes);
 APP.use("/api", authRoutes);
+APP.use(`/api`, courseRoutes);
 
 //Creamos y exportamos el servidor que después iniciamos en index.js
 const httpsServer = https.createServer(credentials, APP);

@@ -128,7 +128,8 @@ export const ltiLaunch = async (req, res) => {
             res.cookie('token', token, {
                 sameSite: 'none',
                 secure: true,
-                htppOnly: false
+                htppOnly: false,
+                partitioned: true,
             });
             return res.redirect(`${process.env.FRONTEND_IP}/dashboard`);
             

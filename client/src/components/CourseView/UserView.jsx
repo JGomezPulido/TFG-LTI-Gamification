@@ -16,10 +16,11 @@ function User({user, index}){
     )
 }
 export default function UsersView(){
-    const {userList, getUserList} = useCourse();
+    const {course, userList, getUserList} = useCourse();
 
     useEffect( () => {
-        getUserList();
+        console.log("UsersView", course);
+        getUserList(course.id);
     }, [])
     console.log(userList);
     const users = userList?.map((user, index) => <User key={index} index={index} user={user}/>);

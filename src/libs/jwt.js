@@ -9,7 +9,7 @@ export function createAccessToken(payload) {
                 "expiresIn": "1d",
             },
             (err, token) => {
-                if (err) reject(error);
+                if (err) reject(err);
                 resolve(token)
             }
         );

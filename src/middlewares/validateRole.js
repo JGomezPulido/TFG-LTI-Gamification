@@ -1,11 +1,19 @@
 import User from "../models/user.model.js"
+import jwt from "jsonwebtoken";
 
-
+export const courseRequired = (req,res,next) => {
+     const { course } = req.cookies;
+        if(!course) return res.status(401).json({message: "Auth denied"});
+        jwt.verify(course, process.env.TK_SECRET, (error, decoded) => {
+            if(error) return  res.status(403).json({message: "Auth denied"});
+            req.course = decoded;
+            next();
+        });    
+}
 export const roleRequired = (expectedRole) => {
     return async (req, res, next) => {
-        const {id} = req.user;
-        const {role: userRole} = await User.findById(id, 'roles');
-        console.log(`User Role: ${userRole}, expected: ${expectedRole}`)
+        var userRole = req.course;
+        if(!userRole.role || userRole.role==="") return res.status(401).json({message: "Could not athorise role"});
         //Admins e Instructores pueden acceder a endpoints para el instructor
         if(expectedRole === "Instructor" && (userRole === "Student" || userRole === "" || userRole === null || userRole === undefined)){
             return res.status(401).json({message: "Incorrect Role, this endpoint is only accessible to instructors"});

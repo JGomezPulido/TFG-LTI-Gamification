@@ -18,28 +18,27 @@ function App() {
     <AuthProvider>
       <CourseProvider>
         <BadgeProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path='/' element={<LandingPage/>}/>
-              <Route path='/register' element={<RegisterPage/>}/>
-              <Route path='/login' element={<LoginPage/>}/>
-              <Route path='/ltiLaunch' element={<LTILaunchPage/>}/>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<LandingPage/>}/>
+            <Route path='/register' element={<RegisterPage/>}/>
+            <Route path='/login' element={<LoginPage/>}/>
+            <Route path='/ltiLaunch' element={<LTILaunchPage/>}/>
 
-              <Route element={<ProtectedRoute/>} >
-                <Route path='/dashboard' element={<DashboardPage/>}/>
+            <Route element={<ProtectedRoute/>} >
                 <Route path='/profile' element={<ProfilePage/>}/>
-                <Route path='/course/:course_id' element={<CoursePage/>}/>
-                <Route badge='/badge/:badge_id' element={<div>Vista de una Badge en particular</div>}/>
-                
-                <Route element={<RoleRoute accepted={"Instructor"}/>}>
-                  <Route path='/badge/create' element={<CreateBadgePage/>}/>
-                  <Route path='/badge/delete/:id' element={<div>Creación de Badges</div>}/>
-                  <Route path='/badge/update/:id' element={<div>Creación de Badges</div>}/>
-                  <Route path='/badge/award/:id'  element={<div>Creación de Badges</div>}/>
+                <Route path='/dashboard' element={<DashboardPage/>}/>
+                  <Route badge='/badge/:badge_id' element={<div>Vista de una Badge en particular</div>}/>
+                  <Route path='/course/:course_id' element={<CoursePage/>}/>
+                  <Route element={<RoleRoute accepted={"Instructor"}/>}>
+                    <Route path='course/:course_id/badge/create'     element={<CreateBadgePage/>}/>
+                    <Route path='course/:course_id/badge/delete/:id' element={<div>Creación de Badges</div>}/>
+                    <Route path='course/:course_id/badge/update/:id' element={<div>Creación de Badges</div>}/>
+                    <Route path='course/:course_id/badge/award/:id'  element={<div>Creación de Badges</div>}/>
+                  </Route>
                 </Route>
-              </Route>
-            </Routes>
-          </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
         </BadgeProvider>
       </CourseProvider>
     </AuthProvider>
