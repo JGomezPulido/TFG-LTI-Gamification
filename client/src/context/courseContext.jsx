@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { createContext } from "react";
 import { exitCourseRequest, getCourseRequest, getUsersRequest, loginCourseRequest } from "../api/course";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const CourseContext = createContext();
 
@@ -19,12 +19,6 @@ export const CourseProvider = ({children}) => {
     const [course, setCourse] = useState(null);
     const [userList, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const params = useParams();
-
-    useEffect(() => {
-        if(params.courseId) getCourse(params.courseId);
-    }, [params]);
-    
     const loginCourse = async (id) => {
         const res = await loginCourseRequest(id);
         if(!res.data)

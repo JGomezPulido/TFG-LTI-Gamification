@@ -1,36 +1,5 @@
 import mongoose from "mongoose";
 
-const UserCourseSchema = new mongoose.Schema({
-    _id: false,
-    course: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-        unique: true,
-        required: true,
-        autoIndex: false,
-    },
-    role: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-});
-
-const UserAssertionSchema = new mongoose.Schema({
-    _id: false,
-    badge: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "BadgeClass",
-        required: true,
-        unique: true,
-        autoIndex: false,
-    },
-    courses: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-    }]
-})
-
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -49,11 +18,27 @@ const UserSchema = new mongoose.Schema({
 
     },
     roles: {
-        type: [UserCourseSchema]
+        type: [{
+            course: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Course",
+                //unique: true,
+                required: true,
+                autoIndex: false,
+            },
+            role: {
+                type: String,
+                required: true,
+                trim: true,
+                autoIndex: false,
+            },
+            _id: false,
+        }]
     },
-    assertions: {
-        type: [UserAssertionSchema]
-    }
+    assertions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BadgeClass',
+    }]
 }, 
 {
     timestamps: true,

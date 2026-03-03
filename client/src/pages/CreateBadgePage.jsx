@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 export default function CreateBadgePage(){
     const {register, handleSubmit} = useForm();
     const {createBadge} = useBadges();
+    const {course} = useCourse();
     const navigate = useNavigate();
     return (
         <div className='flex h-screen items-center justify-center'>
@@ -15,9 +16,10 @@ export default function CreateBadgePage(){
                 <form onSubmit={handleSubmit(async (values) => {
                     try{
                         await createBadge(values);
-                        navigate('/dashboard');
+                        console.log("here");
+                        navigate(`/course/${course.id}`);
                     }catch (error){
-                        console.log("Hubo un error al logear: ", error)
+                        console.log("Could not create badge: ", error.response.data.message);
                     }
                 })}>
                     <h1 className="my-2 font-bold self-center">Login</h1>

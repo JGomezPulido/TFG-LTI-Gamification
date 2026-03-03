@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCourse } from "../context/courseContext";
 import UsersView from "../components/CourseView/UserView";
 import BadgeView from "../components/CourseView/BadgeView";
 import AssertionsView from "../components/CourseView/AssertionView";
+import { useParams } from "react-router-dom";
+
 
 function Render(state, course){
     if (state === "Users"){
@@ -17,13 +19,19 @@ function Render(state, course){
 }
 
 export default function CoursePage (){
-    const {role, course} = useCourse();
+    const {role, course, loading, loginCourse} = useCourse();
+    const params = useParams();
     const [state, setState] = useState("Users");
-
     function changeState(newState) {
         return () => setState(newState);
     }
-
+    useEffect(() => {
+        if(loading) loginCourse(params.course_id);
+    }, []);
+    if(loading) {
+       
+        return <div> Loading... </div>;
+    }
     return(
     <div className="flex flex-col container mx-auto items-center justify-between">
         <h1 className="flex-1 text-3xl text-center py-5">Curso: {course.name}</h1> 

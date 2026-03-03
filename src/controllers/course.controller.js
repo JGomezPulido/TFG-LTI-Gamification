@@ -81,6 +81,7 @@ export const getCourse = async (req, res) => {
 export const loginCourse = async (req, res) => {
     const user = req.user;
     const course = req.params.id;
+    console.log(course, user)
     try {
         const foundCourse = await Course.findById(course, 'name _id ')
         if(!foundCourse) return res.status(404).json({message: "Course not found"});

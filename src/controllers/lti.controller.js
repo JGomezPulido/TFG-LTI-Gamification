@@ -86,8 +86,6 @@ export const ltiLogin = (req, res) => {
 */
 export const ltiLaunch = async (req, res) => {
         const {course, user} = req.ltiData;
-
-        console.log(course, user);
         try {  
             //Comprobamos si el usuario existe en la BBDD
             var userFound = await User.findOne({email: user.email});
@@ -102,7 +100,8 @@ export const ltiLaunch = async (req, res) => {
             } 
 
             const foundCourse = await Course.findOne({courseID: course.id});
-            var finalUser; 
+            var finalUser = userFound; 
+            var courseid;
             if (!foundCourse) {
                 //Si el curso no existe, lo creamos, guardamos y le damos roles al usuario
                 const newCourse = new Course({
@@ -114,16 +113,21 @@ export const ltiLaunch = async (req, res) => {
 
                 userFound.roles.push({ course: savedCourse.id, role: user.role });
                 finalUser = await userFound.save();
-               
-            } else if (isNew) {
-                //Si el curso ya existia pero el usuario es nuevo, lo añadimos al curso y le damos roles
-                foundCourse.users.push(userFound.id);
-                await foundCourse.save();
-
-                userFound.roles.push({ course: foundCourse.id, role: user.role });
-                finalUser = await userFound.save();
+                courseid = savedCourse.id;
+            } 
+            else{
+                const existentUser = await Course.findOne({_id: foundCourse.id, users:  finalUser.id});
+                console.log("here");
+                console.log(existentUser);
+                if(!existentUser){
+                    console.log("Updates")
+                    const updatedCourse = await Course.findByIdAndUpdate(foundCourse.id, {$push: {users: finalUser.id}}, {new: true, upsert: true});
+                    const updatedUser = await User.findByIdAndUpdate(finalUser.id, {$push: {roles: {course: updatedCourse.id, role: user.role}}}, {new: true, upsert: true})
+                    finalUser = updatedUser;
+                }
+                courseid = foundCourse.id;
             }
-            finalUser = userFound;
+            console.log(finalUser);
             const token = await createAccessToken({id: finalUser.id});
             res.cookie('token', token, {
                 sameSite: 'none',
@@ -131,7 +135,7 @@ export const ltiLaunch = async (req, res) => {
                 htppOnly: false,
                 partitioned: true,
             });
-            return res.redirect(`${process.env.FRONTEND_IP}/dashboard`);
+            return res.redirect(`${process.env.FRONTEND_IP}/course/${courseid}`);
             
         } catch (error) {
             return res.status(401).json({message: error.message});

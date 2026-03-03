@@ -6,14 +6,15 @@ export const courseRequired = (req,res,next) => {
         if(!course) return res.status(401).json({message: "Auth denied"});
         jwt.verify(course, process.env.TK_SECRET, (error, decoded) => {
             if(error) return  res.status(403).json({message: "Auth denied"});
-            req.course = decoded;
+            req.course = decoded.id;
+            req.role = decoded.role;
             next();
         });    
 }
 export const roleRequired = (expectedRole) => {
     return async (req, res, next) => {
-        var userRole = req.course;
-        if(!userRole.role || userRole.role==="") return res.status(401).json({message: "Could not athorise role"});
+        var userRole = req.role;
+        if(!userRole || userRole==="") return res.status(401).json({message: "Could not athorise role"});
         //Admins e Instructores pueden acceder a endpoints para el instructor
         if(expectedRole === "Instructor" && (userRole === "Student" || userRole === "" || userRole === null || userRole === undefined)){
             return res.status(401).json({message: "Incorrect Role, this endpoint is only accessible to instructors"});
