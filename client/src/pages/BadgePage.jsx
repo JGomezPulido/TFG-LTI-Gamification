@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import UsersView from "../components/CourseView/UserView";
 import { useCourse } from "../context/courseContext";
+import { Card, Button, Flex } from "@radix-ui/themes";
 
 export default function BadgePage() {
     const params = useParams();
@@ -28,17 +29,16 @@ export default function BadgePage() {
         setShow(!showUsers);
     }
     async function onAward(user){
+        console.log()
         await awardBadge(params.badge_id, user)
     }
 
     console.log(current);
     return (
-    <div 
-    className="flex flex-col py-5 mx-auto items-center justify-center px-5">
+    <Card>
         <form  
         onSubmit={handleSubmit(async (values) => {
                     try{
-                        console.log("Updating");
                         await updateBadge(params.badge_id, values);
                     }catch (error){
                         console.log("Could not create badge: ", error.response.data.message);
@@ -53,13 +53,13 @@ export default function BadgePage() {
         <p>Criteria</p>
         <FormInput type='text' placeholder='Criteria' register={register('criteria')} readonly={role==="Intructor"}  value={current?.criteria}/>
         {role === "Instructor" && 
-        <div className="flex-row px-3 flex ">
-            <button className="mx-3 bg-zinc-700 hover:bg-zinc-600 rounded-md my-2 p-2" type="button" onClick={onDelete}>Delete</button>
-            <button className="mx-3 bg-zinc-700 hover:bg-zinc-600 rounded-md my-2 p-2" type='submit' >Update</button>
-            <button className="mx-3 bg-zinc-700 hover:bg-zinc-600 rounded-md my-2 p-2" type="button" onClick={onShow}>Show Users</button>
-        </div>}
+        <Flex dir="row" gap={"3"} align={"center"} justify={"center"}>
+            <Button type="button" onClick={onDelete}>Delete</Button>
+            <Button type='submit' >Update</Button>
+            <Button  type="button" onClick={onShow}>Show Users</Button>
+        </Flex>}
         </form>
         {showUsers && <UsersView onClick={onAward}/>}
-    </div>
+    </Card>
     )
 }

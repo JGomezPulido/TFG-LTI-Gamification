@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
+
 body{
-  background-color: #202020;
+  background-color: #FFFFFF;
   color: white;
+  margin: 5% 5%;
+}
+
+.radix-themes{
+  --cursor-button: pointer;
+}
+.MainContainer{
+  width: 100%;
+}
+
+.FloatingButton{
+  position: fixed;
+  bottom: 5vw;
+  right: 10%;
+  width: 35px;
+  height: 35px;
+  display: block;
+  padding: 2.5px;
+  align-content: center;
+  z-index: 9999;
 }

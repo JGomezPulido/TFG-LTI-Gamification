@@ -23,7 +23,6 @@ export const CourseProvider = ({children}) => {
         const res = await loginCourseRequest(id);
         if(!res.data)
             throw new Error("Could not get course data");
-        console.log("login: ", res);
         setCourse(res.data.course);
         setRole(res.data.role);
         setLoading(false);
@@ -33,7 +32,6 @@ export const CourseProvider = ({children}) => {
             const res = await getCourseRequest(id);
             if(!res.data)
                 throw new Error("Could not get course data");
-            console.log("getCourse:", res.data)
             setCourse(res.data.course);
             setRole(res.data.role);
         } catch (error) {

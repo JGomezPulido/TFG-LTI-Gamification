@@ -1,32 +1,40 @@
 import { useEffect } from "react";
 import { useCourse } from "../../context/courseContext"
 import { useNavigate } from "react-router-dom";
+import { Card, Text, Flex, Grid, Strong, Button } from "@radix-ui/themes";
 
 function User({user, index, onClick}){
     const navigate = useNavigate();
+    var hideButton = false;
     if(!onClick) {
+        hideButton = true
         onClick = (user) =>{
-        return navigate(`/profile:${user}`);
+        return navigate(`/profile/${user}`);
     }
     }   
-    return (
-        <button onClick={()=>onClick(user._id)} 
-        className={`flex-1 flex flex-col py-3 border-zinc-500 ${index===0?"border-3":"border-x-3 border-b-3"} border-b-3 hover:bg-zinc-600 w-full`}>
-            <p className="flex-3 text-2xl px-0.5"> {user.username} </p>
-            <p className="flex-1 text-0.5 px-0.5"> {user.email} </p>
-        </button>
+    return(
+        <Card size="4">
+           <Flex direction={"column"} align={"center"}>
+                <Text size="5" > <Strong> {user.username} </Strong></Text>
+                <Text>{user.email}</Text>
+                {!hideButton &&
+                <Button  onClick={()=>onClick(user._id)}>Award</Button>}
+            </Flex>
+        </Card>
     )
 }
 export default function UsersView({onClick}){
-    const {role, course, userList, getUserList} = useCourse();
+    const {course, userList, getUserList} = useCourse();
 
     useEffect( () => {
         getUserList(course.id);
     }, [])
     const users = userList?.map((user, index) => <User key={index} index={index} user={user} onClick={onClick}/>);
     return (
-        <div className="flex-5 mx-auto flex flex-col container">
+        <Grid columns={"3"} rows="repeat(2)" gap="3">
+        
             {users}
-        </div>
+        
+        </Grid>
     )
 }

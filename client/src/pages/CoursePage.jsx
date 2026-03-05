@@ -4,6 +4,7 @@ import UsersView from "../components/CourseView/UserView";
 import BadgeView from "../components/CourseView/BadgeView";
 import AssertionsView from "../components/CourseView/AssertionView";
 import { useParams } from "react-router-dom";
+import { Box, Button, Container, Flex, Tabs, Text } from "@radix-ui/themes";
 
 
 function Render(state, course){
@@ -21,10 +22,6 @@ function Render(state, course){
 export default function CoursePage (){
     const {role, course, loading, loginCourse} = useCourse();
     const params = useParams();
-    const [state, setState] = useState("Users");
-    function changeState(newState) {
-        return () => setState(newState);
-    }
     useEffect(() => {
         if(loading) loginCourse(params.course_id);
     }, []);
@@ -33,18 +30,20 @@ export default function CoursePage (){
         return <div> Loading... </div>;
     }
     return(
-    <div className="flex flex-col container mx-auto items-center justify-between">
-        <h1 className="flex-1 text-3xl text-center py-5">Curso: {course.name}</h1> 
-        <div className="flex-1 flex flex-row items-center w-200 justify-between py-2 px-10 mb-2 border-b-white border-b-2">
-
-            <button onClick={changeState("Users")} className="flex-5 text-center px-5 hover:bg-zinc-600">Users</button>
-            <button onClick={changeState("Badges")} className="flex-5 text-center px-5 hover:bg-zinc-600">Badges</button>
-            <button onClick={changeState("Awarded")} className="flex-5 text-1xl px-5 hover:bg-zinc-600">My Badges</button>
-           
-        </div>
-        <div className="flex-3 ">
-         { Render(state, course.id) }
-        </div>
-    </div>
-    );
+        <Flex direction="column" gap="3" justify="between" align="center">
+            <Text size="5"> Curso: {course.name} </Text>
+            <Tabs.Root defaultValue="users">
+                <Tabs.List mb="3" justify={"center"}>
+                    <Tabs.Trigger value="users">Users</Tabs.Trigger>
+                    <Tabs.Trigger value="badges">Badges</Tabs.Trigger>
+                    <Tabs.Trigger value="assertions">Assertions</Tabs.Trigger>
+                </Tabs.List>
+                <Flex width={"80vw"} maxWidth={"80vw"} justify={"center"} align={"center"} mx="10">
+                    <Tabs.Content value="users"> <UsersView/> </Tabs.Content>
+                    <Tabs.Content value="badges"> <BadgeView/> </Tabs.Content>
+                    <Tabs.Content value="assertions"> <AssertionsView/> </Tabs.Content>
+                </Flex>
+            </Tabs.Root>
+        </Flex>
+    )
 }
