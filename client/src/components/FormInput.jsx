@@ -1,8 +1,12 @@
-export default function FormInput ({type, placeholder, register, readonly = false, value=""}){
+import { Box, TextField, Text } from "@radix-ui/themes";
 
-    return (
-         <input type={type} placeholder={placeholder} {...register} { ...({readOnly: readonly, defaultValue: value})}
-                    className="w-full border-zinc-700 border-3 px-4 py-2 rounded-md my-2"
-                />
+export default function FormInput ({type, title, register, readonly = false, value=""}){
+    console.log(readonly)
+    return ( 
+        <Box>
+            <Text as="label">{title}</Text>
+            <TextField.Root type={type} {...register} defaultValue={value} readOnly={readonly}/>
+
+        </Box>
     )
 }
