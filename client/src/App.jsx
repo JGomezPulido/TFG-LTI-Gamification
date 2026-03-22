@@ -39,7 +39,7 @@ function AppRouter(){
         <Route path='/ltiLaunch' element={<LTILaunchPage/>}/>
 
         <Route element={<ProtectedRoute/>} >
-            <Route path='/profile' element={<ProfilePage/>}/>
+            <Route path='/profile/:id' element={<ProfilePage/>}/>
             <Route path='/dashboard' element={<DashboardPage/>}/>
               <Route path='/course/:course_id' element={<CoursePage/>}/>
               <Route path='/course/:course_id/badge/:badge_id' element={<BadgePage/>}/>

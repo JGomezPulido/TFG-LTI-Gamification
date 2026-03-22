@@ -6,17 +6,19 @@ import { Card, Text, Flex, Grid, Strong, Button } from "@radix-ui/themes";
 function User({user, index, onClick}){
     const navigate = useNavigate();
     var hideButton = false;
+    function profile (user) {
+        return navigate(`/profile/${user}`)
+    }
     if(!onClick) {
         hideButton = true
-        onClick = (user) =>{
-        return navigate(`/profile/${user}`);
-    }
+        onClick = profile;
     }   
     return(
         <Card size="4">
            <Flex direction={"column"} align={"center"}>
                 <Text size="5" > <Strong> {user.username} </Strong></Text>
                 <Text>{user.email}</Text>
+                <Button onClick={()=>profile(user._id)}>View</Button>
                 {!hideButton &&
                 <Button  onClick={()=>onClick(user._id)}>Award</Button>}
             </Flex>

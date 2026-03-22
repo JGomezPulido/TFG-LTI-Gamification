@@ -1,6 +1,12 @@
 import User from "../models/user.model.js"
 import jwt from "jsonwebtoken";
 
+export const Roles = {
+    Instructor: "Instructor",
+    Student: "Student",
+    Admin: "Admin",
+}
+
 export const courseRequired = (req,res,next) => {
      const { course } = req.cookies;
         if(!course) return res.status(401).json({message: "Auth denied"});
@@ -16,15 +22,15 @@ export const roleRequired = (expectedRole) => {
         var userRole = req.role;
         if(!userRole || userRole==="") return res.status(401).json({message: "Could not athorise role"});
         //Admins e Instructores pueden acceder a endpoints para el instructor
-        if(expectedRole === "Instructor" && (userRole === "Student" || userRole === "" || userRole === null || userRole === undefined)){
+        if(expectedRole === "Instructor" && (userRole === Roles.Student || userRole === "" || userRole === null || userRole === undefined)){
             return res.status(401).json({message: "Incorrect Role, this endpoint is only accessible to instructors"});
         }
         //Solo los estudiantes pueden acceder a endpoints para estudiantes
-        if(expectedRole === "Student" && userRole !== "Student"){
+        if(expectedRole === Roles.Student && userRole !== Roles.Student){
             return res.status(401).json({message: "Incorrect Role, this endpoint is only accessible to students"});
         }
 
-        if(expectedRole === "Admin" && userRole !== "Admin"){
+        if(expectedRole === Roles.Admin && userRole !== Roles.Admin){
             return res.status(401).json({message: "Incorrect Role, this endpoint is only accessible to administrators"});
         }
         next()
@@ -34,13 +40,13 @@ export const roleRequired = (expectedRole) => {
 export const parseRole = (roles) => {
     for(var i = 0; i < roles.length; i++){
         if(roles[i] === "http://purl.imsglobal.org/vocab/lis/v2/membership#Administrator") {
-            return "Admin";
+            return Roles.Admin;
         }
         else if(roles[i] === "http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor") {
-            return "Instructor";
+            return Roles.Instructor;
         }
         else if(roles[i] === "http://purl.imsglobal.org/vocab/lis/v2/membership#Learner") {
-            return "Student";
+            return Roles.Student;
         }
     }
     

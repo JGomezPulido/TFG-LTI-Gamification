@@ -34,7 +34,7 @@ export const getAssertions = async (req, res) => {
             .populate({path: "assertions",  
                match: { course: course},
                select: "_id name image description criteria"
-    }) ;
+        });
         console.log(assertions);
         if(!assertions)  res.sendStatus(404);
     
@@ -76,13 +76,20 @@ export const deleteBadge = async (req, res) => {
 };
 
 export const updateBadge = async (req, res) => {
-    const badge = await BadgeClass.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {new: true}
-    );
-    if(!badge) return res.status(400).json({message: "Badge not found"});
-    res.status(200).json(badge);
+    try{
+        const badge = await BadgeClass.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators:true,
+            }
+        );
+        if(!badge) return res.status(400).json({message: "Badge not found"});
+        res.status(200).json(badge);
+    }catch (error){
+        res.status(400).json({message: `Update failed: ${error.message}`});
+    }
 };
 
 export const getBadges = async (req, res) => {

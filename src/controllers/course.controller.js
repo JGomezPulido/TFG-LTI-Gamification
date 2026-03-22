@@ -19,18 +19,20 @@ export const getUserByEmail = async (req, res) => {
 }
 
 export const profile = async (req, res) => {
-    const {id} = req.user;
-    const userFound = await User.findById(id);
-    console.log(req.user)
+    const {user: id} = req.params;
+    console.log(id);
+    const userFound = await User.findById(id).populate({
+        path: 'assertions',
+        match: {course: req.course},
+        select: 'name description image'
+    });
     if(!userFound) return res.status(400).json({message: "User not found"});
     console.log(userFound);
     return res.json({
         id: userFound.id,
         username: userFound.username,
         email: userFound.email,
-        roles: userFound.roles,
-        createdAt: userFound.createdAt,
-        updatedAt: userFound.updateadAt,
+        assertions: userFound.assertions,
     });
 }
 

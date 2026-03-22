@@ -10,9 +10,10 @@ import {
     logoutCourse, 
     verifyCourse
 } from "../controllers/course.controller.js";
+import { courseRequired } from "../middlewares/validateRole.js";
 
 const router = Router();
-router.get('/profile', authRequired, profile);
+router.get('/profile/:user', authRequired, courseRequired, profile);
 router.get('/user/:email', getUserByEmail)
 router.get('/course/users/:id', authRequired, getUsers);
 router.get('/course/:id', authRequired, getCourse);

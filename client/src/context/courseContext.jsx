@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { createContext } from "react";
-import { exitCourseRequest, getCourseRequest, getUsersRequest, loginCourseRequest } from "../api/course";
+import { exitCourseRequest, getCourseRequest, getProfileRequest, getUsersRequest, loginCourseRequest } from "../api/course";
 import { useLocation, useParams } from "react-router-dom";
 
 const CourseContext = createContext();
@@ -19,6 +19,7 @@ export const CourseProvider = ({children}) => {
     const [course, setCourse] = useState(null);
     const [userList, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState(null)
     const loginCourse = async (id) => {
         const res = await loginCourseRequest(id);
         if(!res.data)
@@ -35,8 +36,8 @@ export const CourseProvider = ({children}) => {
             setCourse(res.data.course);
             setRole(res.data.role);
         } catch (error) {
-            setRole(null);
-            setCourse("");
+            setRole("");
+            setCourse(null);
             console.log("Error when loading course: ", error.message);
         }
         setLoading(false);
@@ -63,6 +64,20 @@ export const CourseProvider = ({children}) => {
         }
     }
 
+    const getProfile = async (id) => {
+        try{
+            
+            if(!course){
+                throw new Error("You must load a course before trying to get its users");
+            }
+            const res = await getProfileRequest(id);
+            setProfile(res.data);
+        }catch (error){
+            console.log(error.message);
+            return null;
+        }
+    }
+
     return (
         <CourseContext.Provider value={{
             role, 
@@ -71,6 +86,8 @@ export const CourseProvider = ({children}) => {
             unloadCourse,
             getUserList,
             loginCourse,
+            getProfile,
+            profile,
             userList,
             loading,
         }}>
