@@ -11,8 +11,8 @@ const InventorySchema = new mongoose.Schema({
     },
     items: [{
             _id: false,
-            index: false,
             item: { 
+                autoIndex: false,
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
             },

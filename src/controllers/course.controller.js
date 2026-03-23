@@ -5,7 +5,6 @@ import User from "../models/user.model.js";
 export const getUserByEmail = async (req, res) => {
     const {email} = req.params;
     const user = await User.findOne({email}).populate('roles.course', '_id name');
-    console.log(user);
     if(!user) return res.status(200).json({found: false});
     res.json({
         found: true,
@@ -27,7 +26,6 @@ export const profile = async (req, res) => {
         select: 'name description image'
     });
     if(!userFound) return res.status(400).json({message: "User not found"});
-    console.log(userFound);
     return res.json({
         id: userFound.id,
         username: userFound.username,
@@ -44,7 +42,6 @@ export const getUsers = async (req, res) => {
         if (!foundCourse)
             return res.status(404).json({message: "Course not found"});
 
-        console.log(JSON.stringify(foundCourse));
         res.json(foundCourse.users);
     } catch (error) {
         return res.status(404).json({message: error.message});
@@ -54,7 +51,6 @@ export const getUsers = async (req, res) => {
 export const getCourse = async (req, res) => {
     const id = req.params.id;
     const user = req.user;
-    console.log(user, id);
     try {
         if(!id || !user)
             return res.status(400).json({message: "Incorrect Course or User"});
@@ -83,7 +79,6 @@ export const getCourse = async (req, res) => {
 export const loginCourse = async (req, res) => {
     const user = req.user;
     const course = req.params.id;
-    console.log(course, user)
     try {
         const foundCourse = await Course.findById(course, 'name _id ')
         if(!foundCourse) return res.status(404).json({message: "Course not found"});
@@ -122,7 +117,6 @@ export const verifyCourse = (req, res) => {
         if(err) return res.status(401).json({message: "Not authenticated"});
 
         const foundRoles = await User.findOne({_id: user.id, roles: {"$elemMatch": {course: course.id}}}, 'roles').populate('roles.course', '_id name');
-        console.log(user.roles[0])
         if(!foundRoles || ! foundRoles.roles[0]) return res.status(401).json({message: "Not authenticated"});
         
         res.json({

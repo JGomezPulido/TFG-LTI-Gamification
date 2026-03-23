@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import { authRequired } from "../middlewares/validateToken";
-import { courseRequired, roleRequired, Roles } from "../middlewares/validateRole";
+import { authRequired } from "../middlewares/validateToken.js";
+import { courseRequired, roleRequired, Roles } from "../middlewares/validateRole.js";
 import { 
     createItem,
     getItem, 
@@ -11,7 +11,7 @@ import {
     getInventory,
     addItemToInventory,
     delItemFromInventory
-} from "../controllers/inventory.controller";
+} from "../controllers/inventory.controller.js";
 
 const router = Router();
 
@@ -24,3 +24,5 @@ router.delete(`/item/:id`, authRequired, courseRequired, roleRequired(Roles.Inst
 router.get(`/inventory/:user`, authRequired, courseRequired, getInventory);
 router.put(`/inventory/:user`, authRequired, courseRequired, roleRequired(Roles.Instructor), addItemToInventory);
 router.delete(`/inventory/:user`, authRequired, courseRequired, roleRequired(Roles.Instructor), delItemFromInventory);
+
+export default router;

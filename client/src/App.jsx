@@ -16,13 +16,18 @@ import { BadgeProvider } from './context/badgeContext';
 import { CourseProvider } from './context/courseContext';
 import CreateBadgePage from './pages/CreateBadgePage';
 import BadgePage from './pages/BadgePage';
+import { InventoryProvider } from './context/inventoryContext';
+import CreateItemPage from './pages/CreateItemPage';
+import ItemPage from './pages/ItemPage';
 
 function ContextProvider({children}){
   return (
     <AuthProvider>
       <CourseProvider>
         <BadgeProvider>
-          {children}
+          <InventoryProvider>
+            {children}
+          </InventoryProvider>
         </BadgeProvider>
       </CourseProvider>
     </AuthProvider>
@@ -43,11 +48,10 @@ function AppRouter(){
             <Route path='/dashboard' element={<DashboardPage/>}/>
               <Route path='/course/:course_id' element={<CoursePage/>}/>
               <Route path='/course/:course_id/badge/:badge_id' element={<BadgePage/>}/>
+              <Route path='/course/:course_id/item/:item_id' element={<ItemPage/>}/>
               <Route element={<RoleRoute accepted={"Instructor"}/>}>
                 <Route path='course/:course_id/badge/create'     element={<CreateBadgePage/>}/>
-                <Route path='course/:course_id/badge/delete/:id' element={<div>Creación de Badges</div>}/>
-                <Route path='course/:course_id/badge/update/:id' element={<div>Creación de Badges</div>}/>
-                <Route path='course/:course_id/badge/award/:id'  element={<div>Creación de Badges</div>}/>
+                <Route path='course/:course_id/item/create'     element={<CreateItemPage/>}/>
               </Route>    
         </Route>
       </Routes>

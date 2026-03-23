@@ -3,8 +3,10 @@ import { useCourse } from "../context/courseContext";
 import UsersView from "../components/CourseView/UserView";
 import BadgeView from "../components/CourseView/BadgeView";
 import AssertionsView from "../components/CourseView/AssertionView";
+import ItemsView from "../components/CourseView/ItemsView";
+import InventoryView from "../components/CourseView/InventoryView";
 import { useParams } from "react-router-dom";
-import { Box, Button, Container, Flex, Tabs, Text } from "@radix-ui/themes";
+import { Flex, Tabs, Text } from "@radix-ui/themes";
 
 
 function Render(state, course){
@@ -34,14 +36,18 @@ export default function CoursePage (){
             <Text size="5"> Curso: {course.name} </Text>
             <Tabs.Root defaultValue="users">
                 <Tabs.List mb="3" justify={"center"}>
-                    <Tabs.Trigger value="users">Users</Tabs.Trigger>
-                    <Tabs.Trigger value="badges">Badges</Tabs.Trigger>
-                    <Tabs.Trigger value="assertions">Assertions</Tabs.Trigger>
+                    <Tabs.Trigger value="users">      Users       </Tabs.Trigger>
+                    <Tabs.Trigger value="badges">     Badges      </Tabs.Trigger>
+                    <Tabs.Trigger value="assertions"> Assertions  </Tabs.Trigger>
+                    <Tabs.Trigger value="items">      Items       </Tabs.Trigger>
+                    <Tabs.Trigger value="inventory">  Inventory   </Tabs.Trigger>
                 </Tabs.List>
                 <Flex width={"80vw"} maxWidth={"80vw"} justify={"center"} align={"center"} mx="10">
-                    <Tabs.Content value="users"> <UsersView/> </Tabs.Content>
-                    <Tabs.Content value="badges"> <BadgeView/> </Tabs.Content>
+                    <Tabs.Content value="users">      <UsersView/>      </Tabs.Content>
+                    <Tabs.Content value="badges">     <BadgeView/>      </Tabs.Content>
                     <Tabs.Content value="assertions"> <AssertionsView/> </Tabs.Content>
+                    <Tabs.Content value="items">      <ItemsView/>      </Tabs.Content>
+                    <Tabs.Content value="inventory">  <InventoryView/>  </Tabs.Content>
                 </Flex>
             </Tabs.Root>
         </Flex>

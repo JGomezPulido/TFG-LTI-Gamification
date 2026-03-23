@@ -39,7 +39,6 @@ export const ltiLogin = (req, res) => {
         ** }
         */
         const { iss, login_hint, target_link_uri, client_id, lti_message_hint} = query;
-        console.log('📥 Petición a /login con:', query);
         
         if (!iss || !login_hint || !client_id || !target_link_uri) {
             return res.status(400).send('Faltan parámetros requeridos');
@@ -49,8 +48,6 @@ export const ltiLogin = (req, res) => {
         //No entiendo muy bien porque el tutorial utlizaba esta forma de generar tanto state como nonce, pero estoy investigando formas más seguras de hacerlo.
         const state = Math.random().toString(36).substring(2, 15);
         const nonce = Math.random().toString(36).substring(2, 15);
-        
-        console.log('🧠 Guardando state en sesión:', state);
         
         //Guardamos el estado en la sesión del navegador
         req.session.state = state;
@@ -117,17 +114,13 @@ export const ltiLaunch = async (req, res) => {
             } 
             else{
                 const existentUser = await Course.findOne({_id: foundCourse.id, users:  finalUser.id});
-                console.log("here");
-                console.log(existentUser);
                 if(!existentUser){
-                    console.log("Updates")
                     const updatedCourse = await Course.findByIdAndUpdate(foundCourse.id, {$push: {users: finalUser.id}}, {new: true, upsert: true});
                     const updatedUser = await User.findByIdAndUpdate(finalUser.id, {$push: {roles: {course: updatedCourse.id, role: user.role}}}, {new: true, upsert: true})
                     finalUser = updatedUser;
                 }
                 courseid = foundCourse.id;
             }
-            console.log(finalUser);
             const token = await createAccessToken({id: finalUser.id});
             res.cookie('token', token, {
                 sameSite: 'none',

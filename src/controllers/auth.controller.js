@@ -21,7 +21,6 @@ export const register = async  (req, res) => {
             secure: true,
             htppOnly: false
         });
-        console.log(userSaved);
         return res.json({
             id: userSaved.id,
             username: userSaved.username,
@@ -62,7 +61,6 @@ export const login = async (req, res) => {
             htppOnly: false,
             partitioned: true,
         });
-        console.log(ltiUser);
         return res.json({
             id: foundUser.id,
             username: foundUser.username,
@@ -89,7 +87,6 @@ export const verify = async (req, res) => {
         if(err) return res.status(401).json({message: "Not authenticated"});
 
         const user = await User.findById(data.id).populate('roles.course', '_id name');
-        console.log(user.roles[0])
         if(!user) return res.status(401).json({message: "Not authenticated"});
         
         res.json({

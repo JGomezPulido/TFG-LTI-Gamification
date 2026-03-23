@@ -10,6 +10,7 @@ import ltiRoutes from "./routes/lti.routes.js"
 import badgeRoutes from "./routes/badges.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import courseRoutes from "./routes/course.routes.js";
+import inventoryRoutes from "./routes/inventory.routes.js"
 
 export const APP = express();
 
@@ -53,6 +54,7 @@ APP.use("/lti", ltiRoutes);
 APP.use("/api", badgeRoutes);
 APP.use("/api", authRoutes);
 APP.use(`/api`, courseRoutes);
+APP.use(`/api`, inventoryRoutes);
 
 //Creamos y exportamos el servidor que después iniciamos en index.js
 const httpsServer = https.createServer(credentials, APP);
