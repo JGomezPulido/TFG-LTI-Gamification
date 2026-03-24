@@ -77,12 +77,15 @@ export const getInventory = async (req, res) => {
     const {user} = req.params;
 
     try {
-        const inv = Inventory.findOne({course: req.course, user: user})
+        const inv = await Inventory.findOne({course: req.course, user: user})
         .select('items')
-        .populate('items.item');
+        .populate({
+            path: 'items.item',
+            model: 'Item',
+            select: '-course',
+        });
 
         if(!inv) return res.json({items: []});
-        console.log(inv);
         res.json(inv);
     } catch (error) {
         console.log(error);
@@ -100,11 +103,9 @@ export const addItemToInventory = async (req, res) => {
             [
                 {
                     $set: {
-                        course,
-                        user,
                         items: {
                             $cond: [
-                                { $in: [item, "$items.item"] },
+                                { $in: [item, {$ifNull: ["$items.item", []]}] },
                                 {
                                     $map: {
                                         input: "$items",
@@ -133,7 +134,9 @@ export const addItemToInventory = async (req, res) => {
                 }
             ],
             {upsert: true, new: true, updatePipeline: true}
-        );
+        )
+        .populate('items.item', '-course');
+        console.log(inv)
         return res.json(inv);
     } catch (error) {
         console.log(error);
@@ -179,7 +182,7 @@ export const delItemFromInventory = async (req, res) => {
             ],
             {new: true}
         ).select('items');
-        if(!inv) res.json({items: []});
+        if(!inv) return res.json({items: []});
         res.json(inv);
     } catch (error) {
         console.log(error);

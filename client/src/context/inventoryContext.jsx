@@ -62,7 +62,7 @@ export const InventoryProvider = ({children}) => {
     const getInventory = async (user) => {
         try{
             const res = await getInventoryRequest(user);
-            setInventory(res.data);
+            setInventory(res.data.items);
         } catch (error) {
             throw error;
         }

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useCourse } from "../../context/courseContext"
 import { useEffect} from "react";
+import { useAuth } from "../../context/authContext";
 
 import { Button, Flex, Text, Card, Grid, Strong } from "@radix-ui/themes";
 import { useInventory } from "../../context/inventoryContext";
@@ -9,12 +10,14 @@ function Item({item, navigate}){
     async function onClick() {
         navigate(`item/${item._id}`);
     }
+    console.log(item);
     return (
    
         <Card size="4"
         p="1">
             <Flex direction={"column"} gap="2" align={"center"}>
-                <Text size="3"><Strong>{item.name}</Strong></Text>
+                <Text size="3"><Strong>{item.item.name}</Strong></Text>
+                <Text size="1">Quantity: {item.count} </Text>
                 <Flex direction={"row"}>
                     <Button onClick={onClick}>View Details</Button>
                 </Flex>
@@ -23,20 +26,21 @@ function Item({item, navigate}){
     )
 }
 export default function InventoryView(){
+    const {user} = useAuth();
     const { role} = useCourse();
-    const {getItems, items} = useInventory();
+    const {getInventory, inventory} = useInventory();
     
     const navigate = useNavigate();
     function createItem(){
         navigate(`item/create`);
     }
     useEffect( () => {
-        getItems();
+        getInventory(user.id);
     }, [])
     var itemsList = null;
     
-    if(items && Array.isArray(items)) itemsList = items.map( (badge, id) => <Item key={id} item={item} navigate={navigate}/>);
-   
+    if(inventory && Array.isArray(inventory)) itemsList = inventory.map( (item, id) => <Item key={id} item={item} navigate={navigate}/>);
+   console.log(inventory);
     return (
         <Flex direction={"row"} gap={"3"} align={"center"}>
             <Grid columns={"3"} gap="3" rows="repeat(2)" width={"auto"}>
