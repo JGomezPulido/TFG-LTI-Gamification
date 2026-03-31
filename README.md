@@ -67,11 +67,13 @@ cd client
 npm run dev
 ```
 
-Con esto, la app debería estar disponible en los puertos especificados en el paso anterior, pero aún no puede usarse desde Moodle.
+Con esto, la app debería estar disponible en los puertos especificados en el paso [anterior](#configurar-los-puertos), pero aún no puede usarse desde Moodle.
 
 ## Añadir la herramienta a Moodle
 
-Para hacer esto, es necesario seguir los siguientes pasos:
+Para empezar, necesitarán [Instalar Moodle](https://docs.moodle.org/405/en/Installing_Moodle) (Comprobar versión en [Versiones](#versiones))
+
+Una vez hecho eso, accedan a su servidor de Moodle y sigan los siguientes pasos:
 
 1. Ir a `Site Administration > Plugins > Activity Modules > External Tools > Manage Tool` en el servidor de Moodle.
 
