@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 const httpsConfig = {
-  cert: fs.readFileSync("../certs/server.crt"),
-  key: fs.readFileSync("../certs/key.pem"),
+  cert: fs.readFileSync("../certs/server.crt", 'utf8'),
+  key: fs.readFileSync("../certs/key.pem", 'utf8'),
 };
 
 // https://vite.dev/config/

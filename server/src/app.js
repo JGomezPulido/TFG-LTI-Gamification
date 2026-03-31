@@ -17,8 +17,8 @@ export const APP = express();
 //Configuración para HTTPS (necesario para que las cookies de sesion cross-site funcionen en Google Chrome)
 APP.set('trust proxy', 1);
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-var privateKey = fs.readFileSync("certs/key.pem", 'utf8')
-var certificate = fs.readFileSync("certs/server.crt", 'utf8');
+var privateKey = fs.readFileSync("../certs/key.pem", 'utf8')
+var certificate = fs.readFileSync("../certs/server.crt", 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 //Configuración CORS (para que nuestro frontend no tenga problemas al hacer peticiones)
 APP.use(cors({
