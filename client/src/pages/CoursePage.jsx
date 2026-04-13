@@ -33,7 +33,6 @@ export default function CoursePage (){
     }
     return(
         <Flex direction="column" gap="3" justify="between" align="center">
-            <Text size="5"> Curso: {course.name} </Text>
             <Tabs.Root defaultValue="users">
                 <Tabs.List mb="3" justify={"center"}>
                     <Tabs.Trigger value="users">      Users       </Tabs.Trigger>

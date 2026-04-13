@@ -3,7 +3,7 @@ import { useBadges } from "../context/badgeContext";
 import FormInput from "../components/FormInput";
 import { useCourse } from "../context/courseContext";
 import { useNavigate } from "react-router-dom";
-import { Card, Flex, Button, TextField } from "@radix-ui/themes";
+import { Card, Flex, Button } from "@radix-ui/themes";
 
 export default function CreateBadgePage(){
     const {register, handleSubmit} = useForm();

@@ -2,21 +2,18 @@ import { useEffect } from "react";
 import { useBadges } from "../../context/badgeContext"
 import { useNavigate } from "react-router-dom";
 import { Grid, Card, Flex, Strong, Button, Text } from "@radix-ui/themes";
+import ItemCard from "../ItemCard";
 function Badge({badge, navigate}){
     async function onClick() {
         navigate(`badge/${badge._id}`);
     }
+    var texts = [{content: badge.name, strong: true, size: "4"},
+                 {content: badge.description, size: "2"},
+    ]
+
+    var actions = [{title: "View Details", callBack: onClick, condition: true}];
     return (
-    <Card size="4"
-    p="1">
-        <Flex direction={"column"} gap="2" align={"center"}>
-            <Text size="3"><Strong>{badge.name}</Strong></Text>
-            <Text size="2">{badge.description}</Text>
-            <Flex direction={"row"}>
-                <Button onClick={onClick}>View Details</Button>
-            </Flex>
-        </Flex>
-    </Card>
+        <ItemCard text={texts} actions={actions}/>
     )
 }
 

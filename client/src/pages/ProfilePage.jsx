@@ -36,8 +36,10 @@ export default function ProfilePage(){
                 <DataList.Item align="center">
                     <DataList.Label>Assertions</DataList.Label>
                     <DataList.Value>
-                        {profile?.assertions.length === 0?
-                        <Text>This user has no assertions</Text>:
+                        {profile?.assertions.length === 0
+                        ?
+                        <Text>This user has no assertions</Text>
+                        :
                         <Grid columns={"3"} rows="repeat(2)" gap="1">
                             {assertionList}
                         </Grid>

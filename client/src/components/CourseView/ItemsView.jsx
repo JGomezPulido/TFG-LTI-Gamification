@@ -1,26 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useCourse } from "../../context/courseContext"
 import { useEffect} from "react";
-
-import { Button, Flex, Text, Card, Grid, Strong } from "@radix-ui/themes";
+import { Button, Flex, Grid } from "@radix-ui/themes";
 import { useInventory } from "../../context/inventoryContext";
+import ItemCard from "../ItemCard";
 
 function Item({item, navigate}){
     async function onClick() {
         navigate(`item/${item._id}`);
     }
-    return (
-   
-        <Card size="4"
-        p="1">
-            <Flex direction={"column"} gap="2" align={"center"}>
-                <Text size="3"><Strong>{item.name}</Strong></Text>
-                <Flex direction={"row"}>
-                    <Button onClick={onClick}>View Details</Button>
-                </Flex>
-            </Flex>
-        </Card>
-    )
+    var texts = [{content: item.name, size: "3", strong: true}];
+    var actions= [{title: "View Details", callback: onClick, condition: true}];
+    return (<ItemCard text={texts} actions={actions} image={null}/>);
 }
 export default function ItemsView(){
     const { role} = useCourse();

@@ -2,25 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { useCourse } from "../../context/courseContext"
 import { useEffect} from "react";
 import { useBadges } from "../../context/badgeContext";
-import { Button, Flex, Text, Card, Grid, Strong } from "@radix-ui/themes";
+import { Button, Flex, Grid} from "@radix-ui/themes";
+import ItemCard from "../ItemCard";
 
-function Badge({badge, navigate}){
-    async function onClick() {
-        navigate(`badge/${badge._id}`);
-    }
-    return (
-   
-        <Card size="4"
-        p="1">
-            <Flex direction={"column"} gap="2" align={"center"}>
-                <Text size="3"><Strong>{badge.name}</Strong></Text>
-                <Text size="2">{badge.description}</Text>
-                <Flex direction={"row"}>
-                    <Button onClick={onClick}>View Details</Button>
-                </Flex>
-            </Flex>
-        </Card>
-    )
+function Badge({badge, nav}){
+    var text = [{content: badge.name, strong: true, size: "4"},
+                {content: badge.description, size: "2"}];
+                
+    var actions = [{title: "View Details", callback: ()=>nav(`badge/${badge._id}`), condition: true}];
+    return <ItemCard image={null} text={text} actions={actions}></ItemCard>
 }
 export default function BadgeView(){
     const { role} = useCourse();
@@ -35,8 +25,10 @@ export default function BadgeView(){
     }, [])
     var badgesList = null;
     
-    if(badges && Array.isArray(badges)) badgesList = badges.map( (badge, id) => <Badge key={id} badge={badge} navigate={navigate}/>);
-   
+    if(badges && Array.isArray(badges)) badgesList = badges.map( (badge, id) => {
+        return <Badge key={id} badge={badge} nav={navigate}/>
+    });
+    
     return (
         <Flex direction={"row"} gap={"3"} align={"center"}>
             <Grid columns={"3"} gap="3" rows="repeat(2)" width={"auto"}>

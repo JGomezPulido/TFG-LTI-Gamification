@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
-import {Theme} from "@radix-ui/themes"
+import {Theme} from "@radix-ui/themes";
 
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
@@ -19,6 +19,7 @@ import BadgePage from './pages/BadgePage';
 import { InventoryProvider } from './context/inventoryContext';
 import CreateItemPage from './pages/CreateItemPage';
 import ItemPage from './pages/ItemPage';
+import NavBar from './components/Navbar';
 
 function ContextProvider({children}){
   return (
@@ -37,31 +38,33 @@ function ContextProvider({children}){
 function AppRouter(){
   return(
     <BrowserRouter>
+    {/*<NavBar>*/}
       <Routes>
-        <Route path='/' element={<LandingPage/>}/>
-        <Route path='/register' element={<RegisterPage/>}/>
-        <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/ltiLaunch' element={<LTILaunchPage/>}/>
+        <Route path='/'                                         element={<LandingPage/>}    />
+        <Route path='/register'                                 element={<RegisterPage/>}   />
+        <Route path='/login'                                    element={<LoginPage/>}      />
+        <Route path='/ltiLaunch'                                element={<LTILaunchPage/>}  />
 
         <Route element={<ProtectedRoute/>} >
-            <Route path='/profile/:id' element={<ProfilePage/>}/>
-            <Route path='/dashboard' element={<DashboardPage/>}/>
-              <Route path='/course/:course_id' element={<CoursePage/>}/>
-              <Route path='/course/:course_id/badge/:badge_id' element={<BadgePage/>}/>
-              <Route path='/course/:course_id/item/:item_id' element={<ItemPage/>}/>
+          <Route path='/profile/:id'                            element={<ProfilePage/>}    />
+            <Route path='/dashboard'                            element={<DashboardPage/>}  />
+              <Route path='/course/:course_id'                  element={<CoursePage/>}     />
+              <Route path='/course/:course_id/badge/:badge_id'  element={<BadgePage/>}      />
+              <Route path='/course/:course_id/item/:item_id'    element={<ItemPage/>}       />
               <Route element={<RoleRoute accepted={"Instructor"}/>}>
-                <Route path='course/:course_id/badge/create'     element={<CreateBadgePage/>}/>
-                <Route path='course/:course_id/item/create'     element={<CreateItemPage/>}/>
+                <Route path='course/:course_id/badge/create'    element={<CreateBadgePage/>}/>
+                <Route path='course/:course_id/item/create'     element={<CreateItemPage/>} />
               </Route>    
         </Route>
       </Routes>
+    {/* </NavBar> */}
     </BrowserRouter>
   )
 }
 
 function App() {
   return ( 
-    <Theme scaling="110%" accentColor="gray">
+    <Theme scaling="110%" accentColor='gray'>
       <ContextProvider>
         <AppRouter/>
       </ContextProvider>        

@@ -25,3 +25,30 @@ body{
   align-content: center;
   z-index: 9999;
 }
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 64;
+  padding: 4;
+}
+
+[data-state="open"] {
+  animation: slideIn 300ms ease-out;
+}
+
+[data-state="closed"] {
+  animation: slideOut 300ms ease-in;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
