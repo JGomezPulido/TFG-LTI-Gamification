@@ -38,10 +38,19 @@ export const getItem = async (req, res) => {
 };
 
 export const getAllItems = async (req, res) => {
+    console.log(req.body)
+    const {page, count} = req.query;
     try {
-        const items = await Item.find({course: req.course}).select('-course').sort('-name');
+        const items = (await Item.find({course: req.course}).select('-course').sort({name: 1}));
         console.log(items);
-        return res.json(items);
+        const start = page*count;
+        const pages = count/items.length;
+        return res.json({
+            items: items.slice(start, start+count),
+            count,
+            pages,
+            page
+        });
     } catch (error) {
         console.log(error);
         return res.status(404).json({message: error.message});

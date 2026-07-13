@@ -17,7 +17,7 @@ function Item({item, navigate}){
 
 export default function ItemsView(){
     const { role} = useCourse();
-    const {getAllItems, items} = useInventory();
+    const {getAllItems, items, page, pageSize, totalPages} = useInventory();
     
     const navigate = useNavigate();
     function createItem(){
@@ -25,7 +25,8 @@ export default function ItemsView(){
     }
 
     useEffect( () => {
-        getAllItems();
+        console.log(page, pageSize)
+        getAllItems({page, count: pageSize});
     }, []);
 
     var itemsList = null;

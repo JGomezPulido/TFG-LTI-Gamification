@@ -17,7 +17,7 @@ const router = Router();
 
 router.post(`/item/`, authRequired, courseRequired, roleRequired(Roles.Instructor), createItem);
 router.get(`/item/:id`, authRequired, courseRequired, getItem);
-router.get(`/item`, authRequired, courseRequired, getAllItems)
+router.get(`/item/?page`, authRequired, courseRequired, getAllItems)
 router.put(`/item/:id`, authRequired, courseRequired, roleRequired(Roles.Instructor), updateItem);
 router.delete(`/item/:id`, authRequired, courseRequired, roleRequired(Roles.Instructor), deleteItem);
 
