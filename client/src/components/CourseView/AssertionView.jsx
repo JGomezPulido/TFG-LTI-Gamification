@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useBadges } from "../../context/badgeContext"
 import { useNavigate } from "react-router-dom";
-import { Grid, Card, Flex, Strong, Button, Text } from "@radix-ui/themes";
+import { Grid } from "@radix-ui/themes";
 import ItemCard from "../ItemCard";
 function Badge({badge, navigate}){
     async function onClick() {
@@ -20,14 +20,16 @@ function Badge({badge, navigate}){
 export default function AssertionsView({course}){
     const {getAssertions, assertions} = useBadges();
     const navigate = useNavigate();
+
     useEffect(() => {
         getAssertions();
-    }, [])
+    }, []);
+    
     var assertionList = null;
     if(assertions && Array.isArray(assertions)) assertionList = assertions.map( (assertion, id) => <Badge key={id} badge={assertion} navigate={navigate}/>);
     return (
         <Grid columns={"3"} rows="repeat(2)" gap="3">
             {assertionList}
         </Grid>
-    )
+    );
 }

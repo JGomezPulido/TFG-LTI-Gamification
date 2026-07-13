@@ -4,30 +4,43 @@ import FormInput from "../components/FormInput";
 import { useCourse } from "../context/courseContext";
 import { useNavigate } from "react-router-dom";
 import { Card, Flex, Button } from "@radix-ui/themes";
+import { useEffect } from "react";
 
 export default function CreateBadgePage(){
-    const {register, handleSubmit} = useForm();
+    const {register, handleSubmit, formState: {errors: formErrors}} = useForm();
     const {createBadge} = useBadges();
     const {course} = useCourse();
     const navigate = useNavigate();
+
+    console.log(formErrors);
+
+    
     return (
         <Card>
             <form onSubmit={handleSubmit(async (values) => {
                 try{
-                    await createBadge(values);
+                    const formData = new FormData();
+                    
+                    values.image = values.image[0];
+                    Object.entries(values).forEach(([key, value]) => {
+                        if (value === undefined || value === null) return;
+                        formData.append(key, value);
+                    });
+                                    
+                    await createBadge(formData);
                     console.log("here");
                     navigate(`/course/${course.id}`);
                 }catch (error){
-                    console.log("Could not create badge: ", error.response.data.message);
+                    console.log("Could not create badge: ", error);
                 }
             })}>
                 <Flex direction={"column"} gap="3">
                 
                     <h1 className="my-2 font-bold self-center content-center justify-center">Create new badge</h1>
-                    <FormInput type='text' title='name' register={register('name', {required: true})}/>
-                    <FormInput type='text' title='description' register={register('description', {required: true})}/>
-                    <FormInput type='text' title='criteria' register={register('criteria', {required: true})}/>
-                    <FormInput type='text' title='image' register={register('image', {required: true})}/>
+                    <FormInput type='text' title='name' register={register('name', {required: "Name is required"})} error={formErrors.name}/>
+                    <FormInput type='text' title='description' register={register('description', {required: "Description is required"})} error={formErrors.description}/>
+                    <FormInput type='text' title='criteria' register={register('criteria', {required: "Criteria is required"})} error={formErrors.criteria}/>
+                    <FormInput type='file' title='image' register={register('image', {required: "Image is required"})} error={formErrors.image}/>
                     <Button type='submit'>
                         Create Badge
                     </Button>

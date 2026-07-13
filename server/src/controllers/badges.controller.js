@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import BadgeClass from "../models/badge.model.js";
 import Course from "../models/course.model.js";
 import User from "../models/user.model.js";
+import { deleteImage } from "../libs/image.js";
 export const awardBadge = async (req, res) => {
     const {badge, user} = req.params;
     const course = req.course;
@@ -47,6 +48,7 @@ export const getAssertions = async (req, res) => {
 export const createBadge = async (req, res) => {
     const {name, description, criteria, image, alignment, tags} = req.body;
     const id = req.course;
+    console.log(req.file);
     try{
         const badgeExists = await BadgeClass.findOne({name: name, course: id});
         if(badgeExists) return res.status(400).json({message: "A badge with that name already exists for this course"})
@@ -56,7 +58,7 @@ export const createBadge = async (req, res) => {
             name,
             description,
             criteria,
-            image,
+            image: `image/${req.course}/badges/${req.file.filename}`,
             alignment, 
             tags,
             course: foundCourse._id,
@@ -69,25 +71,31 @@ export const createBadge = async (req, res) => {
 };
 
 export const deleteBadge = async (req, res) => {
-    console.log(req.params.id);
     const badge = await BadgeClass.findByIdAndDelete(req.params.id);
+    const path = badge.image.replace("image", "public");
+    deleteImage(path);
     if(!badge) return res.status(400).json({message: "Badge not found"});
     res.status(200).json(badge);
 };
 
 export const updateBadge = async (req, res) => {
+    const {name, criteria, description} = req.body;
     try{
-        const badge = await BadgeClass.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {
-                new: true,
-                runValidators:true,
-            }
-        );
-        if(!badge) return res.status(400).json({message: "Badge not found"});
+        const badge = await BadgeClass.findById(req.params.id)
+        if(req.file){
+            const path = badge.image.replace("image", "public");
+            deleteImage(path);
+            badge.image = `image/${req.course}/badges/${req.file.filename}`;
+        }
+        if(name) badge.name = name;
+        if(criteria) badge.criteria = criteria;
+        if(description) badge.description = description;
+
+        await badge.save();
+
         res.status(200).json(badge);
     }catch (error){
+        console.log(`Update failed: ${error.message}`);
         res.status(400).json({message: `Update failed: ${error.message}`});
     }
 };

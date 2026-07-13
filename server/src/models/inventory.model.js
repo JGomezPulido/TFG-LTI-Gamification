@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const InventorySchema = new mongoose.Schema({
     course: {
@@ -14,6 +14,7 @@ const InventorySchema = new mongoose.Schema({
             item: { 
                 autoIndex: false,
                 type: mongoose.Schema.Types.ObjectId,
+                ref: "Item",
                 required: true,
             },
             count: {
@@ -22,6 +23,19 @@ const InventorySchema = new mongoose.Schema({
 
             }
     }],
+    missions: [{
+        _id: false,
+        mission: {
+            autoIndex: false,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Mission",
+            required: true,
+        },
+        completed: {
+            type: Boolean,
+            default: true,
+        },
+    }]
 });
 
 InventorySchema.index({course: 1, user: 1}, {unique: true});

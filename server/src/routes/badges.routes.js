@@ -12,6 +12,7 @@ import {
 
 import { authRequired } from "../middlewares/validateToken.js";
 import { roleRequired, courseRequired, Roles } from "../middlewares/validateRole.js";
+import { uploadImage } from "../libs/image.js";
 const router = Router();
 
 //Rutas de la API
@@ -20,11 +21,11 @@ const router = Router();
 router.post("/badges/award/:userid", authRequired, courseRequired, roleRequired(Roles.Instructor), awardBadge)
 
 //badges CRUD
-router.post("/badges", authRequired, courseRequired, roleRequired(Roles.Instructor), createBadge);
+router.post("/badges", authRequired, courseRequired, roleRequired(Roles.Instructor), uploadImage('badges').single('image'), createBadge);
 router.get("/badges", authRequired, courseRequired, getBadges);
 router.get("/badges/badge/:id", authRequired, courseRequired, getBadge);
 router.delete("/badges/:id", authRequired, courseRequired, roleRequired(Roles.Instructor), deleteBadge);
-router.put("/badges/:id", authRequired, courseRequired, roleRequired(Roles.Instructor), updateBadge);
+router.put("/badges/:id", authRequired, courseRequired, roleRequired(Roles.Instructor), uploadImage('badges').single('image'), updateBadge);
 router.post("/badges/award/:badge/target/:user", authRequired, courseRequired, roleRequired(Roles.Instructor), awardBadge)
 router.get("/assertions", authRequired, courseRequired, getAssertions);
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"
+import { Form, useNavigate, useParams } from "react-router-dom"
 import { useBadges } from "../context/badgeContext";
 import FormInput from "../components/FormInput";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { useState } from "react";
 import UsersView from "../components/CourseView/UserView";
 import { useCourse } from "../context/courseContext";
 import { Card, Button, Flex } from "@radix-ui/themes";
+import { getImageUrl } from "../api/image";
 
 export default function BadgePage() {
     const params = useParams();
@@ -42,7 +43,14 @@ export default function BadgePage() {
         <form  
         onSubmit={handleSubmit(async (values) => {
                     try{
-                        await updateBadge(params.badge_id, values);
+                        const formData = new FormData();
+                    
+                        values.image = values.image[0];
+                        Object.entries(values).forEach(([key, value]) => {
+                            if (value === undefined || value === null) return;
+                            formData.append(key, value);
+                        });
+                        await updateBadge(params.badge_id, formData);
                     }catch (error){
                         console.log("Could not create badge: ", error.response.data.message);
                     }
@@ -50,7 +58,9 @@ export default function BadgePage() {
         <Flex direction={"column"} gap="3">
             <FormInput type='text' title='Name' register={register('name')} readonly={role!=="Instructor"}/>
             <FormInput type='text' title='Description' register={register('description')} readonly={role!=="Instructor"}/>
-            <FormInput type='text' title='Image' register={register('image')}  readonly={role!=="Instructor"}/>
+            {current&&<img src = {getImageUrl(current?.image)}/>}
+            {role=="Instructor" && current && <FormInput type={"file"} title={"Image"} register={register("image")}/>}
+            <FormInput type='text' title='Criteria' register={register('criteria')} readonly={role!=="Instructor"} />
             <FormInput type='text' title='Criteria' register={register('criteria')} readonly={role!=="Instructor"} />
             {role === "Instructor" && 
             <Flex dir="row" gap={"3"} align={"center"} justify={"center"}>

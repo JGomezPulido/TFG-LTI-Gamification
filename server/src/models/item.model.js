@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 const ItemSchema = new mongoose.Schema({
     course: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
         required: true,
     },
 

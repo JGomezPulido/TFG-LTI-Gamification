@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useCourse } from "../../context/courseContext"
 import { useEffect} from "react";
 import { useAuth } from "../../context/authContext";
-
 import { Flex, Grid } from "@radix-ui/themes";
 import { useInventory } from "../../context/inventoryContext";
 import ItemCard from "../ItemCard";
@@ -21,7 +19,6 @@ function Item({item, navigate}){
 }
 export default function InventoryView(){
     const {user} = useAuth();
-    const { role} = useCourse();
     const {getInventory, inventory} = useInventory();
     
     const navigate = useNavigate();
@@ -39,5 +36,5 @@ export default function InventoryView(){
                 {itemsList}
             </Grid>
         </Flex>
-    )
+    );
 }

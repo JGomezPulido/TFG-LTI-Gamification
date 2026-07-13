@@ -17,7 +17,7 @@ export const createItem = async (req, res) => {
             image: image
         });
 
-        const itemSaved = newItem.save();
+        const itemSaved = await newItem.save();
         return res.json(itemSaved);
     }catch(error) {
         console.log(error);

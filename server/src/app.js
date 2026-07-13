@@ -11,6 +11,7 @@ import badgeRoutes from "./routes/badges.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import courseRoutes from "./routes/course.routes.js";
 import inventoryRoutes from "./routes/inventory.routes.js"
+import missionRoutes from "./routes/mission.routes.js"
 
 export const APP = express();
 
@@ -31,7 +32,7 @@ APP.use(cors({
 //json para que se pueda leer JSON de las requests REST (express no puede hacer esto por defecto)
 APP.use(express.urlencoded({extended: true,}));
 APP.use(express.json());
-APP.use(cookieParser())
+APP.use(cookieParser());
 
 APP.use(morgan('dev'));
 
@@ -55,6 +56,8 @@ APP.use("/api", badgeRoutes);
 APP.use("/api", authRoutes);
 APP.use(`/api`, courseRoutes);
 APP.use(`/api`, inventoryRoutes);
+APP.use("/api", missionRoutes);
+APP.use("/image", express.static("public"));
 
 //Creamos y exportamos el servidor que después iniciamos en index.js
 const httpsServer = https.createServer(credentials, APP);

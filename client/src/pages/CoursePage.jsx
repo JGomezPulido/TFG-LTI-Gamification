@@ -5,6 +5,7 @@ import BadgeView from "../components/CourseView/BadgeView";
 import AssertionsView from "../components/CourseView/AssertionView";
 import ItemsView from "../components/CourseView/ItemsView";
 import InventoryView from "../components/CourseView/InventoryView";
+import MissionView from "../components/CourseView/MissionView";
 import { useParams } from "react-router-dom";
 import { Flex, Tabs, Text } from "@radix-ui/themes";
 
@@ -40,6 +41,7 @@ export default function CoursePage (){
                     <Tabs.Trigger value="assertions"> Assertions  </Tabs.Trigger>
                     <Tabs.Trigger value="items">      Items       </Tabs.Trigger>
                     <Tabs.Trigger value="inventory">  Inventory   </Tabs.Trigger>
+                    <Tabs.Trigger value="mission">    Missions    </Tabs.Trigger>
                 </Tabs.List>
                 <Flex width={"80vw"} maxWidth={"80vw"} justify={"center"} align={"center"} mx="10">
                     <Tabs.Content value="users">      <UsersView/>      </Tabs.Content>
@@ -47,6 +49,7 @@ export default function CoursePage (){
                     <Tabs.Content value="assertions"> <AssertionsView/> </Tabs.Content>
                     <Tabs.Content value="items">      <ItemsView/>      </Tabs.Content>
                     <Tabs.Content value="inventory">  <InventoryView/>  </Tabs.Content>
+                    <Tabs.Content value="mission">    <MissionView/> </Tabs.Content>
                 </Flex>
             </Tabs.Root>
         </Flex>

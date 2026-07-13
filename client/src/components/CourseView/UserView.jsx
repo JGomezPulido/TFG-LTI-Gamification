@@ -1,19 +1,22 @@
 import { useEffect } from "react";
 import { useCourse } from "../../context/courseContext"
 import { useNavigate } from "react-router-dom";
-import { Card, Text, Flex, Grid, Strong, Button } from "@radix-ui/themes";
+import { Grid } from "@radix-ui/themes";
 import ItemCard from "../ItemCard";
 
 function User({user, onClick}){
     const navigate = useNavigate();
     var hideButton = false;
+    
     function profile (user) {
-        return navigate(`/profile/${user}`)
+        return navigate(`/profile/${user}`);
     }
+
     if(!onClick) {
-        hideButton = true
+        hideButton = true;
         onClick = profile;
-    }   
+    } 
+
     var texts = [{content: user.username, strong: true, size: "4"},
                 {content: user.email}
     ];
@@ -30,7 +33,8 @@ export default function UsersView({onClick}){
 
     useEffect( () => {
         getUserList(course.id);
-    }, [])
+    }, []);
+
     const users = userList?.map((user, index) => <User key={index} user={user} onClick={onClick}/>);
     return (
         <Grid columns={"3"} rows="repeat(2)" gap="3">
@@ -38,5 +42,5 @@ export default function UsersView({onClick}){
             {users}
         
         </Grid>
-    )
+    );
 }
