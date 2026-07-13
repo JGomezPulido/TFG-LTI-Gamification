@@ -103,21 +103,26 @@ export const getMission = async (req, res) => {
 
 //Estas  deberian ir en inventario?
 
-export const enableMission = async (req, res) => {
+export const toggleMission = async (req, res) => {
     const {id} = req.params;
     try{
         const foundMission = await Mission.findById(id);
         if(!foundMission) return res.status(400).json({message: "Could not find mission"});
-        if(foundMission.enabled) return res.status(200);
         const users = await User.find().elemMatch('roles', {course: req.course, role: Roles.Student});
-        foundMission.enabled = true;
-        users.forEach(async (user) => {
-            console.log(user);
-            const foundInventory = await Inventory.findOne({user: user._id});
-            if(!foundInventory) return res.status(400).json({message: "could not find inventory for user"});
-            foundInventory.missions.push({mission: foundMission._id, completed: false});
-            await foundInventory.save();
-        });
+        foundMission.enabled = !foundMission.enabled;
+        
+            users.forEach(async (user) => {
+                const foundInventory = await Inventory.findOne({user: user._id});
+                if(!foundInventory) return res.status(400).json({message: "could not find inventory for user"});
+                
+                if(foundMission.enabled){
+                    if(foundInventory.missions.find((el) => el.mission.equals(foundMission._id))) return;
+                    foundInventory.missions.push({mission: foundMission._id, completed: false});
+                }else{
+                    foundInventory.missions = foundInventory.missions.filter((el) => !el.mission.equals(foundMission._id));
+                }
+                await foundInventory.save();
+            });
             
         
         await foundMission.save();

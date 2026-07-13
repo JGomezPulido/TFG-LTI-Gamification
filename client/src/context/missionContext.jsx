@@ -8,7 +8,7 @@ import {
     getUserMissionsRequest,
     giveMissionRequest,
     completeMissionRequest,
-    enableMissionRequest
+    toggleMissionRequest
 } from "../api/mission.js"
 const MissionContext = createContext();
 
@@ -107,10 +107,11 @@ export const MissionProvider = ({children}) => {
         }
     };
 
-    const enableMission = async (id) => {
+    const toggleMission = async (id) => {
         try{
-            const res = await enableMissionRequest(id);
+            const res = await toggleMissionRequest(id);
         } catch(error){
+            console.log(error.message);
 
         }
     }
@@ -135,7 +136,7 @@ export const MissionProvider = ({children}) => {
             getAllMissions,
             giveMission,
             completeMission,
-            enableMission
+            toggleMission
         }}>
             {children}
         </MissionContext.Provider>

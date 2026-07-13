@@ -48,7 +48,6 @@ export const getAssertions = async (req, res) => {
 export const createBadge = async (req, res) => {
     const {name, description, criteria, image, alignment, tags} = req.body;
     const id = req.course;
-    console.log(req.file);
     try{
         const badgeExists = await BadgeClass.findOne({name: name, course: id});
         if(badgeExists) return res.status(400).json({message: "A badge with that name already exists for this course"})

@@ -9,4 +9,4 @@ export const deleteMissionRequest   = async (id)        => axios.delete(`/missio
 export const getUserMissionsRequest = async (user)      => axios.get(`/mission/user/${user}`);
 export const giveMissionRequest     = async (id, user)  => axios.put(`/mission/${id}/user/${user}`);
 export const completeMissionRequest = async (id, user)  => axios.put(`/mission/${id}/user/${user}/reward`);
-export const enableMissionRequest   = async (id)        => axios.post(`/mission/${id}/enable`);
+export const toggleMissionRequest   = async (id)        => axios.put(`/mission/${id}/toggle`);

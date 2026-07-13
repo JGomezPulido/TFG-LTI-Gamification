@@ -11,7 +11,7 @@ import {
     getUserMissions, 
     completeMission,
     giveMission,
-    enableMission, 
+    toggleMission, 
 } from "../controllers/missions.controller.js";
 
 const router = Router();
@@ -23,7 +23,7 @@ router.put(`/mission/:id`, authRequired, courseRequired, roleRequired(Roles.Inst
 router.delete(`/mission/:id`, authRequired, courseRequired, roleRequired(Roles.Instructor), deleteMission);
 
 router.get(`/mission/user/:user`, authRequired, courseRequired, getUserMissions);
-router.post(`/mission/:id/enable`, authRequired, courseRequired, roleRequired(Roles.Instructor), enableMission);
+router.put(`/mission/:id/toggle`, authRequired, courseRequired, roleRequired(Roles.Instructor), toggleMission);
 router.put(`/mission/:id/user/:user`, authRequired, courseRequired, roleRequired(Roles.Instructor), giveMission);
 router.put(`/mission/:id/user/:user/reward`, authRequired, courseRequired, roleRequired(Roles.Instructor), completeMission);
 
