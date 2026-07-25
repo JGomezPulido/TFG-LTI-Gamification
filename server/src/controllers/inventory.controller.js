@@ -39,15 +39,20 @@ export const getItem = async (req, res) => {
 };
 
 export const getAllItems = async (req, res) => {
-    const {page = 1, count = 10, search, name} = req.query;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const count = Math.max(parseInt(req.query.count) || 10, 10);
+    const {search, name} = req.query;
     try {
-        const items = await Item.find({course: req.course, name: new RegExp(name, "i")})
-                                .select('-course')
-                                .limit(count)
-                                .skip((page-1) * count)
-                                .sort({name: 1});
+        const nameFilter = name ? new RegExp(name, "i") : /.*/;
+        const query = { course: req.course, name: nameFilter };
 
-        const total = await Item.countDocuments({course: req.course, name: new RegExp(name, "i")});
+        const items = await Item.find(query)
+                        .select('-course')
+                        .limit(count)
+                        .skip((page - 1) * count)
+                        .sort({name: 1});
+
+        const total = await Item.countDocuments(query);
         const totalPages = Math.ceil(total/count);
 
         return res.status(200).json({

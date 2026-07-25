@@ -5,7 +5,7 @@ import { Button, Flex, Grid } from "@radix-ui/themes";
 import { useInventory } from "../../context/inventoryContext";
 import {PlusIcon} from "@radix-ui/react-icons"
 import ItemCard from "../ItemCard";
-import {Pagination} from "grommet"
+import {Pagination} from "../Pagination"
 
 function Item({item, navigate}){
     async function onClick() {
@@ -37,7 +37,7 @@ export default function ItemsView(){
         getAllItems({page: 1, count: pageSize, name: evt.target.value});
         setName(evt.target.value);
     }
-    function setPage({page, startIndex, endIndex}) {
+    function setPage(page) {
         getAllItems({page, count: pageSize, name: name});
     }
     var itemsList = null;
@@ -50,7 +50,7 @@ export default function ItemsView(){
             <Grid columns={"3"} gap="3" width={"auto"}>
                 {itemsList}
             </Grid>
-        <Pagination page={1} step={pageSize} numberItems={totalPages*pageSize} onChange={setPage}/>
+        <Pagination page={page} count={totalPages} onPageChange={setPage}/>
             {role ==="Instructor" && 
             <Button
                 className="FloatingButton"

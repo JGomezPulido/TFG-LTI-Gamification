@@ -1,0 +1,20 @@
+/*
+  Everything else (colors, radius, spacing, hover/active states, focus rings)
+  comes for free from Radix Themes' Button/IconButton — driven by whatever
+  <Theme accentColor="..." radius="..."> you've set at the app root.
+  This file only covers the bits Themes doesn't style for you.
+*/
+
+.pagination-page-btn {
+  min-width: var(--space-6);
+  justify-content: center;
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  user-select: none;
+}
