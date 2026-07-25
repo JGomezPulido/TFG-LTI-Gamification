@@ -17,7 +17,7 @@ export const InventoryProvider = ({children}) => {
     const [current, setCurrent] = useState(null);
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -62,14 +62,14 @@ export const InventoryProvider = ({children}) => {
             console.log(error);
         }
     };
-    const getAllItems = async (data) => {
+    const getAllItems = async (values) => {
          try{
             setLoading(true);
-            console.log(data);
-            const res = await getAllItemsRequest(data);
+            const res = await getAllItemsRequest(values);
+            console.log(res.data);
             setItems(res.data.items);
-            setPage(data.page);
-            setTotalPages(res.data.pages);
+            setPage(res.data.page);
+            setTotalPages(res.data.totalPages);
             setLoading(false);
         } catch (error) {
             setLoading(true);
@@ -120,6 +120,7 @@ export const InventoryProvider = ({children}) => {
             loading,
             page,
             pageSize,
+            totalPages,
             getAllItems,
             getItem,
             createItem,

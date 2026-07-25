@@ -72,7 +72,7 @@ function AppRouter(){
 
 function App() {
   return ( 
-    <Theme scaling="110%" accentColor='gray' appearance='dark'>
+    <Theme scaling="100%" accentColor='gray' appearance='dark'>
       <ContextProvider>
         <AppRouter/>
       </ContextProvider>        

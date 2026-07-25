@@ -1,6 +1,6 @@
 #root {
   height: 100%;
-  flex:1;
+  flex-grow:1 ;
   display: flex;
   align-content: stretch;
   justify-content: stretch;
@@ -19,9 +19,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0;
-}
 
 h1 {
   font-size: 3.2em;
