@@ -2,7 +2,7 @@ import axios from './axios.js'
 
 export const createItemRequest   = async (data)            => axios.post(`/item`, data);
 export const getItemRequest      = async (id)              => axios.get(`/item/${id}`);
-export const getAllItemsRequest  = async (data)                => axios.get(`/item/?page=${data.page}&count=${data.count}`);
+export const getAllItemsRequest  = async (data)                => axios.get(`/item?page=${data.page}&count=${data.count}${data.name?`&name=${data.name}`:""}`);
 export const deleteItemRequest   = async (id)              => axios.delete(`/item/${id}`);
 export const updateItemRequest   = async (id, data)        => axios.put(`/item/${id}`, data);
 

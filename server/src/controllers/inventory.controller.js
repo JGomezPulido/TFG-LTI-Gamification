@@ -1,6 +1,7 @@
 import Item from "../models/item.model.js"
 import Inventory from "../models/inventory.model.js"
 
+
 export const createItem = async (req, res) => {
     const {name, description, image} = req.body;
     console.log(req.body);
@@ -38,22 +39,25 @@ export const getItem = async (req, res) => {
 };
 
 export const getAllItems = async (req, res) => {
-    console.log(req.body)
-    const {page, count} = req.query;
+    const {page = 1, count = 10, search, name} = req.query;
     try {
-        const items = (await Item.find({course: req.course}).select('-course').sort({name: 1}));
-        console.log(items);
-        const start = page*count;
-        const pages = count/items.length;
-        return res.json({
-            items: items.slice(start, start+count),
+        const items = await Item.find({course: req.course, name: new RegExp(name, "i")})
+                                .select('-course')
+                                .limit(count)
+                                .skip((page-1) * count)
+                                .sort({name: 1});
+
+        const total = await Item.countDocuments({course: req.course, name: new RegExp(name, "i")});
+        const totalPages = Math.ceil(total/count);
+
+        return res.status(200).json({
+            items,
             count,
-            pages,
-            page
+            page, 
+            totalPages,
         });
     } catch (error) {
-        console.log(error);
-        return res.status(404).json({message: error.message});
+        return res.status(500).json({message: error.message});
     }
 };
 

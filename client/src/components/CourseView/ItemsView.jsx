@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useCourse } from "../../context/courseContext"
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import { Button, Flex, Grid } from "@radix-ui/themes";
 import { useInventory } from "../../context/inventoryContext";
 import {PlusIcon} from "@radix-ui/react-icons"
 import ItemCard from "../ItemCard";
+import {Pagination} from "grommet"
 
 function Item({item, navigate}){
     async function onClick() {
@@ -18,26 +19,38 @@ function Item({item, navigate}){
 export default function ItemsView(){
     const { role} = useCourse();
     const {getAllItems, items, page, pageSize, totalPages} = useInventory();
-    
+    const [name, setName] = useState("");
     const navigate = useNavigate();
     function createItem(){
         navigate(`item/create`);
     }
 
     useEffect( () => {
-        console.log(page, pageSize)
         getAllItems({page, count: pageSize});
     }, []);
 
+    useEffect(() => {
+        console.log(page, totalPages)
+    }, [page, totalPages])
+
+    function searchItem (evt){
+        getAllItems({page: 1, count: pageSize, name: evt.target.value});
+        setName(evt.target.value);
+    }
+    function setPage({page, startIndex, endIndex}) {
+        getAllItems({page, count: pageSize, name: name});
+    }
     var itemsList = null;
     
     if(items && Array.isArray(items)) itemsList = items.map( (item, id) => <Item key={id} item={item} navigate={navigate}/>);
     
     return (
-        <Flex direction={"row"} gap={"3"} align={"center"}>
-            <Grid columns={"3"} gap="3" rows="repeat(2)" width={"auto"}>
+        <Flex direction={"column"} gap={"3"} align={"center"}>
+            <input onChange={searchItem} placeholder="Search..."></input>
+            <Grid columns={"3"} gap="3" width={"auto"}>
                 {itemsList}
             </Grid>
+        <Pagination page={1} step={pageSize} numberItems={totalPages*pageSize} onChange={setPage}/>
             {role ==="Instructor" && 
             <Button
                 className="FloatingButton"

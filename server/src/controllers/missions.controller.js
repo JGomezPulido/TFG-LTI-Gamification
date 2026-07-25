@@ -46,7 +46,6 @@ export const updateMission = async (req, res) => {
         if (name)        updatedMission.name = name;
         if (description) updatedMission.description = description;
         if (rewards?.length > 0){
-            console.log(rewards);
             rewards.forEach(reward => {
                 const index = updatedMission.rewards.findIndex(
                     r => { 
@@ -65,11 +64,9 @@ export const updateMission = async (req, res) => {
             });
         }
         updatedMission.rewards = updatedMission.rewards.filter(r => r.amount > 0);
-        console.log(updatedMission);
         await updatedMission.save();
         res.json(updatedMission.toObject());
     }catch (error){
-        //console.log(error);
         return res.status(400).json({message:error.message});
     }
 
@@ -78,12 +75,10 @@ export const updateMission = async (req, res) => {
 export const getAllMissions = async (req, res) => {
     try{
         const missions = await Mission.find({course: req.course});
-        console.log(req.course);
         if(!missions) return res.status(400).json({message: "Couldnt find missions for this course"});
-        console.log(missions);
         return res.json(missions);
     }catch (error) {
-        console.log(error);
+        return res.status(500).json({message:error.message});
     }
 };
 
@@ -178,77 +173,26 @@ export const completeMission = async (req, res) => {
         const mission = await Mission.findById(mission);
         if(!mission) return res.status(400).json({ message: "Could not find mission" });
 
-        //Esta query hace dos cosas, primero añade los objetos necesarios al inventario del usuario, después marca la misión correspondiente como completada para el usuario
-        const updatePipeline = [{
-                $set: {
-                    items: {
-                        $filter: {
-                            input: {
-                                $reduce: {
-                                    input: mission.rewards,
-                                    initialValue: "$items",
-                                    in: {
-                                        $cond: {
-                                            if: { $in: ["$$this.type", "$$value.item"] },
-                                            then: {
-                                                $map: {
-                                                    input: "$$value",
-                                                    as: "i",
-                                                    in: {
-                                                        $cond: {
-                                                            if: { $eq: ["$$i.item", "$$this.type"] },
-                                                            then: {
-                                                                item: "$$i.item",
-                                                                count: { $add: ["$$i.count", "$$this.amount"] },
-                                                            },
-                                                            else: "$$i",
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                            else: {
-                                                $concatArrays: [
-                                                    "$$value",
-                                                    [{ item: "$$this.type", count: "$$this.amount" }],
-                                                ],
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                            as: "i",
-                            cond: { $gt: ["$$i.count", 0] },
-                        },
-                    },
-                },
-            },
-        {
-                $set: {
-                    missions: {
-                        $map: {
-                            input: "$missions",
-                            as: "m",
-                            in: {
-                                $cond: {
-                                    if: { $eq: ["$$m.mission", missionId] },
-                                    then: { mission: "$$m.mission", completed: true },
-                                    else: "$$m",
-                                },
-                            },
-                        },
-                    },
-                },
-            },];
-        const updatedInventory = await Inventory.findOneAndUpdate(
-            {
-                user,
-                course: req.course,
-                missions: { $elemMatch: {mission, completed: false}}
-            },
-            updatePipeline,
-            {new: true, runValidators: true}
+        const inventory = await Inventory.findOne({user, course: req.course});
+        if(!inventory) return res.status(400).json({message: "Error couldn't find inventory for this user"});
+
+        const missionIdx = inventory.missions.findIndex((m) => m.mission = id && m.completed == false);
+        if(missionIdx < 0) return res.status(400).json({message: "Specified mission is not enabled or mission is complete"});
+
+        inventory.missions[missionIdx].complete = true;
+        mission.rewards.forEach(
+            (reward) =>  {
+                const itemIdx = inventory.items.findIndex((item) => item.item.equals(reward.type));
+                if(itemIdx >= 0){
+                    inventory.items[itemIdx].count += reward.amount;
+                }else{
+                    inventory.items.push({item: reward.type, count: reward.amount});
+                }
+            }
         );
-        if(!updatedInventory) return res.status(400).json({message: "Could not update user Inventory or mission was already complete"});
+        
+        inventory.items.filter((item) => item.count !== 0);
+        await inventory.save();
         return res.sendStatus(200);
     } catch (error) {
         return res.status(500).json({message: error.message});
