@@ -148,3 +148,4 @@ dist
 certs/
 moodle-conf.txt
 keys.json
+server/public/
