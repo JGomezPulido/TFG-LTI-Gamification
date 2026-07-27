@@ -78,9 +78,6 @@ function getPageRange(page, count, siblingCount) {
   const leftSibling = Math.max(page - siblingCount, 1);
   const rightSibling = Math.min(page + siblingCount, count);
 
-  console.log(page + siblingCount, page, siblingCount);
-  console.log("Siblings: ", leftSibling, rightSibling);
-
   const showLeftEllipsis = leftSibling > 2;
   const showRightEllipsis = rightSibling < count - 1;
 
@@ -99,7 +96,5 @@ function getPageRange(page, count, siblingCount) {
     for (let i = rightSibling + 1; i < count; i++) range.push(i);
 
   range.push(count);
-
-  console.log(range);
   return range;
 }

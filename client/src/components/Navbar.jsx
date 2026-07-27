@@ -1,6 +1,6 @@
 import { useCourse } from "../context/courseContext"
-import { Heading, Flex, Text, Button, Dialog, Link, Box } from "@radix-ui/themes";
-import "../nav.css"
+import { Heading, Flex, Text, Button, Dialog, Link, Box, ScrollArea } from "@radix-ui/themes";
+import "./nav.css"
 
 
 export default function NavBar({children}){
@@ -19,9 +19,9 @@ export default function NavBar({children}){
                     <Text>Objetos</Text>
                     <Text>Usuarios</Text>
                 </Flex>
-                <Flex flexGrow={"1"} justify={"center"} pt={"4"} justifySelf={"center"} overflowY={"auto"} minHeight={"0"}>
+                <ScrollArea>
                         {children}
-                </Flex>
+                </ScrollArea>
             </Flex>
         </Flex>
     )

@@ -66,7 +66,6 @@ export const InventoryProvider = ({children}) => {
          try{
             setLoading(true);
             const res = await getAllItemsRequest(values);
-            console.log(res.data);
             setItems(res.data.items);
             setPage(res.data.page);
             setTotalPages(res.data.totalPages);

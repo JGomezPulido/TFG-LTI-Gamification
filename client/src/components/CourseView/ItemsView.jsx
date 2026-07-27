@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useCourse } from "../../context/courseContext"
 import { useEffect, useState} from "react";
-import { Button, Flex, Grid } from "@radix-ui/themes";
+import { Button, Flex, Grid, TextField } from "@radix-ui/themes";
 import { useInventory } from "../../context/inventoryContext";
-import {PlusIcon} from "@radix-ui/react-icons"
+import {MagnifyingGlassIcon, PlusIcon} from "@radix-ui/react-icons"
 import ItemCard from "../ItemCard";
 import {Pagination} from "../Pagination"
 
@@ -29,10 +29,6 @@ export default function ItemsView(){
         getAllItems({page, count: pageSize});
     }, []);
 
-    useEffect(() => {
-        console.log(page, totalPages)
-    }, [page, totalPages])
-
     function searchItem (evt){
         getAllItems({page: 1, count: pageSize, name: evt.target.value});
         setName(evt.target.value);
@@ -45,8 +41,12 @@ export default function ItemsView(){
     if(items && Array.isArray(items)) itemsList = items.map( (item, id) => <Item key={id} item={item} navigate={navigate}/>);
     
     return (
-        <Flex direction={"column"} gap={"3"} align={"center"}>
-            <input onChange={searchItem} placeholder="Search..."></input>
+        <Flex mb="5" direction={"column"} gap={"3"} align={"center"}>
+            <TextField.Root placeholder="Search by name..." onChange={searchItem}>
+                <TextField.Slot>
+                    <MagnifyingGlassIcon height="16" width="16"/>
+                </TextField.Slot>
+            </TextField.Root>
             <Grid columns={"3"} gap="3" width={"auto"}>
                 {itemsList}
             </Grid>
