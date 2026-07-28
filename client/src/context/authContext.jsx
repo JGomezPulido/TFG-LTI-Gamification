@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, useCallback, useMemo } from "react";
 
 import { registerRequest, loginRequest, requestUser, verifyTokenRequest} from "../api/auth";
 
@@ -18,7 +18,7 @@ export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-    const signup = async (data) => {
+    const signup = useCallback(async (data) => {
         try{
             const res = await registerRequest(data);
             setUser(res.data);
@@ -29,8 +29,8 @@ export const AuthProvider = ({children}) => {
             setAuthenticated(false);
             console.log(error);
         }
-    }
-    const signin = async (data) => {
+    }, []);
+    const signin = useCallback(async (data) => {
         try{
             const res = await loginRequest(data);
             setUser(res.data);
@@ -40,9 +40,9 @@ export const AuthProvider = ({children}) => {
             setAuthenticated(false);
             console.log(error);
         }
-    }
+    }, []);
 
-    const getUser = async (data) => {
+    const getUser = useCallback(async (data) => {
         try{
             const res = await requestUser(data.email);
             console.log(res);
@@ -51,7 +51,7 @@ export const AuthProvider = ({children}) => {
             return false;
         }
 
-    }
+    }, []);
 
     useEffect(() => {
         async function checkToken() {
@@ -86,15 +86,17 @@ export const AuthProvider = ({children}) => {
 
         checkToken();
     }, []);
+
+    const value = useMemo(() => ({
+        signup,
+        signin,
+        getUser,
+        isAuthenticated,
+        user,
+        loading,
+    }), [user, loading, isAuthenticated])
     return (
-        <AuthContext.Provider value={{
-            signup,
-            signin,
-            getUser,
-            isAuthenticated,
-            user,
-            loading
-        }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

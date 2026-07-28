@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useContext } from "react";
 import { createContext } from "react";
 import { exitCourseRequest, getCourseRequest, getProfileRequest, getUsersRequest, loginCourseRequest } from "../api/course";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useMatch, useParams } from "react-router-dom";
 
 const CourseContext = createContext();
 
@@ -20,15 +20,16 @@ export const CourseProvider = ({children}) => {
     const [userList, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState(null)
-    const loginCourse = async (id) => {
+
+    const loginCourse = useCallback(async (id) => {
         const res = await loginCourseRequest(id);
         if(!res.data)
             throw new Error("Could not get course data");
         setCourse(res.data.course);
         setRole(res.data.role);
         setLoading(false);
-    }
-    const getCourse = async (id) => {
+    }, []);
+    const getCourse =  useCallback(async (id) => {
         try {
             const res = await getCourseRequest(id);
             if(!res.data)
@@ -42,16 +43,16 @@ export const CourseProvider = ({children}) => {
         }
         setLoading(false);
         return;
-    };
+    }, []);
 
-    const unloadCourse = async () => {
+    const unloadCourse = useCallback(async (id) => {
         const res = await exitCourseRequest(id);
         setCourse(null);
         setRole("");
         setUsers([]);
-    }
+    }, [])
 
-    const getUserList = async (id) => {
+    const getUserList = useCallback(async (id) => {
         try {
             if(!course){
                 throw new Error("You must load a course before trying to get its users");
@@ -62,9 +63,9 @@ export const CourseProvider = ({children}) => {
             console.log(error.message);
             return null;
         }
-    }
+    }, []);
 
-    const getProfile = async (id) => {
+    const getProfile = useCallback(async (id) => {
         try{
             
             if(!course){
@@ -76,21 +77,23 @@ export const CourseProvider = ({children}) => {
             console.log(error.message);
             return null;
         }
-    }
+    }, []);
 
-    return (
-        <CourseContext.Provider value={{
+    const value = useMemo(() => ({
             role, 
             course,
+            profile,
+            userList,
+            loading,
             getCourse,
             unloadCourse,
             getUserList,
             loginCourse,
             getProfile,
-            profile,
-            userList,
-            loading,
-        }}>
+    }), [role, course, loading, userList, profile]);
+
+    return (
+        <CourseContext.Provider value={value}>
             {children}
         </CourseContext.Provider>
     )

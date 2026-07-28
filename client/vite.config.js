@@ -19,6 +19,11 @@ export default defineConfig({
     https: httpsConfig,
     origin: 'https://localhost:4443',
   },
+  preview: {
+    port: 4443,
+    https: httpsConfig,
+    origin: 'https://localhost:4443',
+  },
   envDir: '.',
   base: 'https://localhost:4443',
 });
