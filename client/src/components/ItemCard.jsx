@@ -9,11 +9,35 @@ export default function ItemCard({image, text, actions, children}){
         var format = text.content;
         if(text.strong) format = <Strong>{text.content}</Strong>;
 
-        return (
-        <Text key={id} size={text.size} align={"center"}>
-            {format}
-        </Text>)
-        ;
+        var textEl = (
+            <Flex
+                    key={id}
+                    align="center"
+                    justify="center"
+                    minHeight="1lh" 
+                    width="100%">
+                <Text key={id} size={text.size} align={"center"}>
+                    {format}
+                </Text>
+            </Flex>
+        );
+
+        // Reserve fixed vertical space for the title (first item) so cards
+        // stay the same height whether the title wraps to 1 or 2 lines.
+        if (id === 0) {
+            return (
+                <Flex
+                    key={id}
+                    align="center"
+                    justify="center"
+                    style={{ minHeight: `2lh`, width: "100%" }}
+                >
+                    {textEl}
+                </Flex>
+            );
+        }
+
+        return textEl;
     })
     if(actions == null) actions = [];
     else actions = [].concat(actions);
@@ -24,15 +48,15 @@ export default function ItemCard({image, text, actions, children}){
     });
 
     return(
-        <Box width="200px" height="150px">
-            <Card p="1" size="4" height="100%" style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-                <Flex direction={"column"} gap="2" justify={"between"} align={"center"} height={"100%"}>
-                    <Flex direction="column" gap="1" align="center" justify={"center"} flexGrow={"1"} style={{ overflow: "hidden", width: "100%" }}>
+        <Box width="200px">
+            <Card p="0" size="4"  style={{ width: "100%"}}>
+                <Flex direction={"column"} gap="2" justify={"between"} align={"center"}  width={"100%"} minWidth={"0"} flexGrow={"1"}>
+                    <Flex direction="column" gap="1" align="center" justify={"start"} flexGrow={"1"} style={{  width: "100%" }}>
                         {textList}
                     </Flex>
                     {children 
                     && <Flex> {children} </Flex>}
-                    <Flex direction={"row"}>
+                    <Flex gap="1" direction={"row"} width={"100%"} minWidth={"0"} justify={"center"}>
                         {actionList}
                     </Flex>
                 </Flex>
