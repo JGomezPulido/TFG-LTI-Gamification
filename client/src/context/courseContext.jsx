@@ -50,7 +50,7 @@ export const CourseProvider = ({children}) => {
         setCourse(null);
         setRole("");
         setUsers([]);
-    }, [])
+    }, []);
 
     const getUserList = useCallback(async (id) => {
         try {

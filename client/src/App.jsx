@@ -28,6 +28,7 @@ import ItemsView from './components/CourseView/ItemsView';
 import InventoryView from './components/CourseView/InventoryView';
 import AssertionsView from './components/CourseView/AssertionView';
 import MissionView from './components/CourseView/MissionView';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function ContextProvider({children}){
   return (
@@ -50,28 +51,27 @@ function AppRouter(){
     <BrowserRouter>
     
       <Routes>
-        <Route element={<NavBar/>}>
-          <Route path='/'                                         element={<LandingPage/>}    />
-          <Route path='/register'                                 element={<RegisterPage/>}   />
-          <Route path='/login'                                    element={<LoginPage/>}      />
-          <Route path='/ltiLaunch'                                element={<LTILaunchPage/>}  />
+        <Route path='/'                                         element={<LandingPage/>}      />
+        <Route path='/register'                                 element={<RegisterPage/>}     />
+        <Route path='/login'                                    element={<LoginPage/>}        />
+        <Route path='/ltiLaunch'                                element={<LTILaunchPage/>}    />
+        <Route element={<NavBar/>} path="/course/:course_id">
 
           <Route element={<ProtectedRoute/>} >
-            <Route path='/profile/:id'                            element={<ProfilePage/>}    />
-              <Route path='/dashboard'                            element={<DashboardPage/>}  />
-                <Route path='/badges'                             element={<BadgeView/>} />
-                <Route path='/items'                              element={<ItemsView/>} />
-                <Route path='/inventory'                          element={<InventoryView/>} />
-                <Route path='/assertions'                         element={<AssertionsView/>} />
-                <Route path='/missions'                           element={<MissionView/>} />
-                <Route path='/course/:course_id'                  element={<CoursePage/>}     />
-                <Route path='/course/:course_id/badge/:badge_id'  element={<BadgePage/>}      />
-                <Route path='/course/:course_id/item/:item_id'    element={<ItemPage/>}       />
-                <Route path='/course/:course_id/mission/:mission_id' element={<MissionPage/>} />
+            <Route path='profile/:id'                           element={<ProfilePage/>}      />
+              <Route path='dashboard'                           element={<DashboardPage/>}    />
+                <Route path='badges'                            element={<BadgeView/>}        />
+                <Route path='items'                             element={<ItemsView/>}        />
+                <Route path='inventory'                         element={<InventoryView/>}    />
+                <Route path='assertions'                        element={<AssertionsView/>}   />
+                <Route path='missions'                          element={<MissionView/>}      />
+                <Route path='badge/:badge_id'                   element={<BadgePage/>}        />
+                <Route path='item/:item_id'                     element={<ItemPage/>}         />
+                <Route path='mission/:mission_id'               element={<MissionPage/>}      />
                 <Route element={<RoleRoute accepted={"Instructor"}/>}>
-                  <Route path='course/:course_id/badge/create'    element={<CreateBadgePage/>}/>
-                  <Route path='course/:course_id/item/create'     element={<CreateItemPage/>} />
-                  <Route path='course/:course_id/mission/create'  element={<CreateMissionPage/>}/>
+                  <Route path='badge/create'                    element={<CreateBadgePage/>}  />
+                  <Route path='item/create'                     element={<CreateItemPage/>}   />
+                  <Route path='mission/create'                  element={<CreateMissionPage/>}/>
                 </Route>    
           </Route>
         </Route>
@@ -83,10 +83,13 @@ function AppRouter(){
 }
 
 function App() {
+  const queryClient = new QueryClient();
   return ( 
     <Theme scaling="100%" accentColor='gray' appearance='dark'>
       <ContextProvider>
-        <AppRouter/>
+        <QueryClientProvider client={queryClient}>
+          <AppRouter/>
+        </QueryClientProvider>
       </ContextProvider>        
     </Theme>
   );

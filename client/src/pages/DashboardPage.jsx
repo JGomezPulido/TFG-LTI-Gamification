@@ -1,17 +1,42 @@
+import { getAllItemsRequest } from "../api/inventory";
+import ListView from "../components/ListView";
 import Course from "../components/CourseButton";
+import { getImageUrl } from "../api/image"
 import { useAuth } from "../context/authContext";
+import { useCourse } from "../context/courseContext";
+import { Avatar, Button } from "@radix-ui/themes";
+import { useNavigate } from "react-router-dom";
+
+import GeneralView from "../components/GeneralView";
 
 export default function DashboardPage(){
-    const {user} = useAuth();
-    console.log(user);
-    const courses = user.roles.map(role => <li key={role.course._id}><Course role={role}/></li>);
+    const {role} = useCourse();
+    const navigate = useNavigate();
+    const columns = [
+        {title: "Name", render: (item) => item.name},
+        {title: "Actions", render: (item) => (<Button onClick={()=>navigate(`../item/${item._id}`)}>View</Button>)}
+    ]
+    async function fetchData(page, count, name) {
+        try{
+            const res = await getAllItemsRequest({page, count, name});
+            return res.data;
+        }catch(error){
+            return error;
+        }
+    }
+
+    function renderItem (item){
+        return (
+            <div>
+                <Avatar size="9" src={getImageUrl(item.image)}/>
+                <div>{item.name}</div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex items-center justify-center flex-col px-5 py-5">
-            <h1 className="my-5 text-3xl">Dashboard</h1>
-            <ul
-            className="w-full text-center text-lg">Cursos:
-               {courses}
-            </ul>
-        </div>
+        <GeneralView queryKey={["ItemsRequest"]} fetchFnc={fetchData} tableColumns={columns} renderCard={renderItem}>
+
+        </GeneralView>
     );
 }

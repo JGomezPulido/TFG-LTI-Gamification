@@ -9,35 +9,17 @@ export default function ItemCard({image, text, actions, children}){
         var format = text.content;
         if(text.strong) format = <Strong>{text.content}</Strong>;
 
-        var textEl = (
-            <Flex
-                    key={id}
-                    align="center"
-                    justify="center"
-                    minHeight="1lh" 
-                    width="100%">
+        var flexProps = {align: "center", justify: "center", minHeight:"1lh", width:"100%"}
+        //Reservamos espacio extra si es el primer elemento (generalmente el título).
+        if(id === 0) flexProps.minHeight = "2lh";
+
+        return (
+            <Flex key={id} {...flexProps}>
                 <Text key={id} size={text.size} align={"center"}>
                     {format}
                 </Text>
             </Flex>
         );
-
-        // Reserve fixed vertical space for the title (first item) so cards
-        // stay the same height whether the title wraps to 1 or 2 lines.
-        if (id === 0) {
-            return (
-                <Flex
-                    key={id}
-                    align="center"
-                    justify="center"
-                    style={{ minHeight: `2lh`, width: "100%" }}
-                >
-                    {textEl}
-                </Flex>
-            );
-        }
-
-        return textEl;
     })
     if(actions == null) actions = [];
     else actions = [].concat(actions);
@@ -50,7 +32,7 @@ export default function ItemCard({image, text, actions, children}){
     return(
         <Box width="200px">
             <Card p="0" size="4"  style={{ width: "100%"}}>
-                <Flex direction={"column"} gap="2" justify={"between"} align={"center"}  width={"100%"} minWidth={"0"} flexGrow={"1"}>
+                <Flex direction={"column"} gap="2" justify={"between"} align={"center"} width={"100%"} minWidth={"0"} flexGrow={"1"}>
                     <Flex direction="column" gap="1" align="center" justify={"start"} flexGrow={"1"} style={{  width: "100%" }}>
                         {textList}
                     </Flex>

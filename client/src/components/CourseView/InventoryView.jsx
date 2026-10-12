@@ -29,7 +29,6 @@ export default function InventoryView(){
     
     if(inventory && Array.isArray(inventory)) itemsList = inventory.map( (item, id) => <Item key={id} item={item} navigate={navigate}/>);
 
-   console.log(inventory);
     return (
         <Flex direction={"row"} gap={"3"} align={"center"}>
             <Grid columns={"3"} gap="3" rows="repeat(2)" width={"auto"}>

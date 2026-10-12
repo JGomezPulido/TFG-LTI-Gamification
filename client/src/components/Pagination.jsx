@@ -39,7 +39,7 @@ export function Pagination({ page, count, onPageChange, siblingCount = 1 }) {
             </Text>
           ) : (
             <Button
-              key={item}
+              key={i}
               size="2"
               variant={item === page ? "solid" : "soft"}
               color={item === page ? undefined : "gray"}

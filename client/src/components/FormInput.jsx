@@ -2,7 +2,6 @@ import { Box, TextField, Text, Callout } from "@radix-ui/themes";
 import { InfoCircledIcon} from "@radix-ui/react-icons"
 
 export default function FormInput ({type, title, register, readonly = false, value="", error}){
-    console.log(readonly)
     return ( 
         <Box>
             <Text as="label">{title}</Text>

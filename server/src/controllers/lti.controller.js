@@ -128,7 +128,7 @@ export const ltiLaunch = async (req, res) => {
                 htppOnly: false,
                 partitioned: true,
             });
-            return res.redirect(`${process.env.FRONTEND_IP}/course/${courseid}`);
+            return res.redirect(`${process.env.FRONTEND_IP}/course/${courseid}/dashboard`);
             
         } catch (error) {
             return res.status(401).json({message: error.message});

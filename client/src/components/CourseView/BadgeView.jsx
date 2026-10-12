@@ -20,7 +20,7 @@ export default function BadgeView(){
     
     const navigate = useNavigate();
     function createBadge(){
-        navigate(`badge/create`);
+        navigate(`../badge/create`);
     }
     useEffect( () => {
         getBadges();

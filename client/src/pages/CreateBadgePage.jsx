@@ -3,7 +3,7 @@ import { useBadges } from "../context/badgeContext";
 import FormInput from "../components/FormInput";
 import { useCourse } from "../context/courseContext";
 import { useNavigate } from "react-router-dom";
-import { Card, Flex, Button } from "@radix-ui/themes";
+import { Card, Flex, Button, Heading } from "@radix-ui/themes";
 import { useEffect } from "react";
 
 export default function CreateBadgePage(){
@@ -12,31 +12,30 @@ export default function CreateBadgePage(){
     const {course} = useCourse();
     const navigate = useNavigate();
 
-    console.log(formErrors);
+    const sendData = handleSubmit(async (values, evt) => {
+        evt?.preventDefault();
+        try{
+            const formData = new FormData();
+            
+            values.image = values.image[0];
+            Object.entries(values).forEach(([key, value]) => {
+                if (value === undefined || value === null) return;
+                formData.append(key, value);
+            });
+                            
+            await createBadge(formData);
+            navigate(`/course/${course.id}`);
+        }catch (error){
+            console.log("Could not create badge: ", error);
+        }
+    });
 
-    
     return (
         <Card>
-            <form onSubmit={handleSubmit(async (values) => {
-                try{
-                    const formData = new FormData();
-                    
-                    values.image = values.image[0];
-                    Object.entries(values).forEach(([key, value]) => {
-                        if (value === undefined || value === null) return;
-                        formData.append(key, value);
-                    });
-                                    
-                    await createBadge(formData);
-                    console.log("here");
-                    navigate(`/course/${course.id}`);
-                }catch (error){
-                    console.log("Could not create badge: ", error);
-                }
-            })}>
+            <form onSubmit={sendData}>
                 <Flex direction={"column"} gap="3">
-                
-                    <h1 className="my-2 font-bold self-center content-center justify-center">Create new badge</h1>
+
+                    <Heading as={"h1"} size={"6"}>Create new badge</Heading>
                     <FormInput type='text' title='name' register={register('name', {required: "Name is required"})} error={formErrors.name}/>
                     <FormInput type='text' title='description' register={register('description', {required: "Description is required"})} error={formErrors.description}/>
                     <FormInput type='text' title='criteria' register={register('criteria', {required: "Criteria is required"})} error={formErrors.criteria}/>
